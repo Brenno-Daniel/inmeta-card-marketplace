@@ -15,6 +15,10 @@ const routes: RouteRecordRaw[] = [
         component: () =>
           import('src/modules/inventory/views/InventoryPage.vue'),
       },
+      {
+        path: 'trade',
+        component: () => import('src/modules/trade/views/TradePage.vue'),
+      },
     ],
   },
 
