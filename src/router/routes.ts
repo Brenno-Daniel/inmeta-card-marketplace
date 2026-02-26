@@ -19,6 +19,11 @@ const routes: RouteRecordRaw[] = [
         path: 'trade',
         component: () => import('src/modules/trade/views/TradePage.vue'),
       },
+      {
+        path: 'active-trades',
+        component: () =>
+          import('src/modules/trade/views/ActiveTradesPage.vue'),
+      },
     ],
   },
 
