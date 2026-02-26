@@ -34,7 +34,7 @@ export const useInventoryStore = defineStore('inventory', {
       try {
         const response = await fetchUserCards();
         this.cards = mapCardsToInventory(response);
-      } catch (error: unknown) {
+      } catch (_error: unknown) {
         this.errorMessage = 'Unable to load your deck box.';
         this.cards = [];
       } finally {
@@ -53,7 +53,7 @@ export const useInventoryStore = defineStore('inventory', {
       try {
         await addUserCards(cardIds);
         await this.loadInventory();
-      } catch (error: unknown) {
+      } catch (_error: unknown) {
         this.errorMessage = 'Failed to add cards to your deck.';
       } finally {
         this.isUpdating = false;

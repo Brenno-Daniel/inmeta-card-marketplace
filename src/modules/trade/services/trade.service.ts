@@ -1,6 +1,5 @@
 import { apiClient } from 'src/core/api/axios';
 import type {
-  Card,
   CardsListResponse,
   CreateTradeRequest,
   CreateTradeResponse,

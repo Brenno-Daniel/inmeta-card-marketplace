@@ -9,7 +9,7 @@
           <div class="row items-center q-gutter-x-md text-caption dt-text-muted">
             <span>Level 42 Duelist · {{ inventoryStore.cardCount }} cards in vault</span>
             <q-linear-progress
-              value="0.42"
+              :value="0.42"
               color="primary"
               track-color="dark"
               class="inventory-xp-bar"

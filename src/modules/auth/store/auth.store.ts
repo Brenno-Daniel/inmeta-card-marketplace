@@ -80,7 +80,7 @@ export const useAuthStore = defineStore('auth', {
           name: profile.name,
           email: profile.email,
         };
-      } catch (error: unknown) {
+      } catch (_error: unknown) {
         this.setToken(null);
         this.user = null;
       } finally {

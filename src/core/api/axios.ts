@@ -16,8 +16,7 @@ interface AxiosRequestMetadata {
   loadingTimeoutId?: number;
 }
 
-export interface DuelTradeAxiosRequestConfig<D = unknown>
-  extends AxiosRequestConfig<D> {
+export interface DuelTradeAxiosRequestConfig<D = unknown> extends AxiosRequestConfig<D> {
   metadata?: AxiosRequestMetadata;
 }
 
@@ -37,15 +36,13 @@ function attachAuthHeader(config: DuelTradeAxiosRequestConfig): void {
     config.headers = {};
   }
 
-  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
   (config.headers as Record<string, string>).Authorization = `Bearer ${token}`;
 }
 
 function scheduleGlobalLoading(config: DuelTradeAxiosRequestConfig): void {
   const appStore = useAppStore();
 
-  const enableGlobalLoading =
-    config.metadata?.enableGlobalLoading ?? true;
+  const enableGlobalLoading = config.metadata?.enableGlobalLoading ?? true;
 
   if (!enableGlobalLoading) {
     return;
@@ -79,20 +76,16 @@ function clearGlobalLoading(config?: DuelTradeAxiosRequestConfig): void {
 apiClient.interceptors.request.use(
   (config) => {
     const typedConfig = config as DuelTradeAxiosRequestConfig;
-
     attachAuthHeader(typedConfig);
     scheduleGlobalLoading(typedConfig);
-
-    return typedConfig;
+    return config;
   },
   (error: AxiosError) => Promise.reject(error),
 );
 
 apiClient.interceptors.response.use(
   (response: AxiosResponse) => {
-    clearGlobalLoading(
-      response.config as DuelTradeAxiosRequestConfig | undefined,
-    );
+    clearGlobalLoading(response.config as DuelTradeAxiosRequestConfig | undefined);
 
     return response;
   },
@@ -103,4 +96,3 @@ apiClient.interceptors.response.use(
 );
 
 export { apiClient };
-

@@ -205,7 +205,7 @@ const authError = computed(() => authStore.errorMessage);
 
 watchEffect(() => {
   if (authStore.isAuthenticated) {
-    router.replace('/');
+    void router.replace('/');
   }
 });
 
