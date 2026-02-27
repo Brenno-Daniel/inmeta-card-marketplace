@@ -6,14 +6,16 @@ const routes: RouteRecordRaw[] = [
     component: () => import('layouts/MainLayout.vue'),
     children: [
       {
+        path: '/auth',
+        component: () => import('src/modules/auth/views/AuthPage.vue'),
+      },
+      {
         path: '',
-        component: () =>
-          import('src/modules/marketplace/views/MarketplacePage.vue'),
+        component: () => import('src/modules/marketplace/views/MarketplacePage.vue'),
       },
       {
         path: 'inventory',
-        component: () =>
-          import('src/modules/inventory/views/InventoryPage.vue'),
+        component: () => import('src/modules/inventory/views/InventoryPage.vue'),
       },
       {
         path: 'trade',
@@ -21,15 +23,9 @@ const routes: RouteRecordRaw[] = [
       },
       {
         path: 'active-trades',
-        component: () =>
-          import('src/modules/trade/views/ActiveTradesPage.vue'),
+        component: () => import('src/modules/trade/views/ActiveTradesPage.vue'),
       },
     ],
-  },
-
-  {
-    path: '/auth',
-    component: () => import('src/modules/auth/views/AuthPage.vue'),
   },
 
   // Always leave this as last one,
