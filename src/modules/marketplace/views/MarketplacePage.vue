@@ -27,31 +27,13 @@
             </div>
           </div>
         </div>
-
-        <div class="column items-end q-gutter-y-sm">
-          <q-chip
-            outline
-            color="secondary"
-            text-color="secondary"
-            icon="whatshot"
-            class="bg-transparent text-uppercase"
-          >
-            Live marketplace
-          </q-chip>
-          <div class="dt-glass-surface dt-holo-border q-pa-md text-right">
-            <div class="text-caption dt-text-muted">Status</div>
-            <div class="row items-center justify-end q-gutter-x-xs">
-              <q-badge rounded color="positive" />
-              <span class="text-caption">Duel server online</span>
-            </div>
-          </div>
-        </div>
       </div>
     </section>
 
     <section class="q-px-lg q-pb-xl q-pt-lg">
       <div class="row items-center justify-between q-mb-md">
         <div class="row items-center q-gutter-sm">
+          <q-badge color="secondary" text-color="dark" class="q-py-md" />
           <div class="dt-heading-orbitron text-subtitle1">Live Marketplace</div>
           <q-badge color="secondary" text-color="dark" class="q-ml-sm">
             {{ tradesCountLabel }}
