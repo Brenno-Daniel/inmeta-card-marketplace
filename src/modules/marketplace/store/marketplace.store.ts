@@ -33,7 +33,7 @@ export const useMarketplaceStore = defineStore('marketplace', {
         const response = await fetchTrades(this.buildQuery());
         this.trades = response.list;
         this.more = response.more;
-      } catch (_error: unknown) {
+      } catch {
         this.trades = [];
         this.errorMessage = 'Unable to load live marketplace.';
       } finally {
@@ -53,7 +53,7 @@ export const useMarketplaceStore = defineStore('marketplace', {
         const response = await fetchTrades(this.buildQuery());
         this.trades = [...this.trades, ...response.list];
         this.more = response.more;
-      } catch (_error: unknown) {
+      } catch {
         this.errorMessage = 'Failed to fetch more trades.';
         this.page -= 1;
       } finally {
@@ -69,4 +69,3 @@ export const useMarketplaceStore = defineStore('marketplace', {
     },
   },
 });
-

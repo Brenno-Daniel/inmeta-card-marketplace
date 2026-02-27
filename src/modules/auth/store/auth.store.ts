@@ -80,7 +80,7 @@ export const useAuthStore = defineStore('auth', {
           name: profile.name,
           email: profile.email,
         };
-      } catch (_error: unknown) {
+      } catch {
         this.setToken(null);
         this.user = null;
       } finally {
@@ -96,4 +96,3 @@ export const useAuthStore = defineStore('auth', {
     },
   },
 });
-
