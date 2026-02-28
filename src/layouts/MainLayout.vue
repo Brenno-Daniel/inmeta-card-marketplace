@@ -5,8 +5,8 @@
         <!-- Left: Logo + Brand -->
         <router-link to="/" class="dt-header__brand row items-center no-wrap">
           <div class="dt-header__logo" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-              <path d="M12 2L22 8v8L12 22L2 16V8L12 2Z" />
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12 2L21 8v8L12 22L3 16V8L12 2Z" />
             </svg>
           </div>
           <span class="dt-header__title dt-heading-orbitron">DuelTrade</span>
@@ -20,10 +20,17 @@
             v-for="item in navItems"
             :key="item.path"
             :to="item.path"
+            :exact="item.path === '/'"
             class="dt-header__nav-link"
             active-class="dt-header__nav-link--active"
           >
-            <q-icon :name="item.icon" size="sm" />
+            <!-- Marketplace: hexagon outline icon -->
+            <span v-if="item.icon === 'hexagon'" class="dt-header__nav-icon-hexagon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 2L21 8v8L12 22L3 16V8L12 2Z" />
+              </svg>
+            </span>
+            <q-icon v-else :name="item.icon" size="20px" />
             <span>{{ item.label }}</span>
           </router-link>
         </nav>
@@ -35,11 +42,16 @@
           <template v-if="!authStore.isAuthenticated">
             <q-btn
               to="/auth"
-              label="Join Duelist Hub"
-              class="dt-header__cta dt-holo-glow"
+              class="dt-header__cta"
               no-caps
+              flat
               unelevated
-            />
+            >
+              <span class="row items-center no-wrap q-gutter-xs">
+                <span>Join Duelist Hub</span>
+                <q-icon name="arrow_forward" size="18px" />
+              </span>
+            </q-btn>
           </template>
           <template v-else>
             <!-- Mobile: Hamburger with nav inside drawer -->
@@ -66,7 +78,12 @@
               </q-avatar>
               <q-icon name="expand_more" size="xs" />
             </q-btn>
-            <q-menu v-model="profileMenuOpen" class="dt-header__dropdown" anchor="bottom right" self="top right">
+            <q-menu
+              v-model="profileMenuOpen"
+              class="dt-header__dropdown"
+              anchor="bottom right"
+              self="top right"
+            >
               <q-list class="dt-header__dropdown-list">
                 <q-item disable>
                   <q-item-section avatar>
@@ -103,7 +120,9 @@
       :width="280"
     >
       <q-list v-if="authStore.isAuthenticated" class="q-pt-lg">
-        <q-item-label header class="dt-heading-orbitron text-caption dt-text-muted">Menu</q-item-label>
+        <q-item-label header class="dt-heading-orbitron text-caption dt-text-muted"
+          >Menu</q-item-label
+        >
         <q-item
           v-for="item in navItems"
           :key="item.path"
@@ -119,7 +138,13 @@
           <q-item-section>{{ item.label }}</q-item-section>
         </q-item>
         <q-separator class="q-my-md" />
-        <q-item clickable @click="handleLogout(); drawerOpen = false;">
+        <q-item
+          clickable
+          @click="
+            handleLogout();
+            drawerOpen = false;
+          "
+        >
           <q-item-section avatar>
             <q-icon name="logout" />
           </q-item-section>
@@ -146,10 +171,10 @@ const profileMenuOpen = ref(false);
 const drawerOpen = ref(false);
 
 const navItems = [
-  { path: '/', label: 'Marketplace', icon: 'store' },
-  { path: '/inventory', label: 'Inventory', icon: 'grid_view' },
+  { path: '/', label: 'Marketplace', icon: 'hexagon' },
+  { path: '/inventory', label: 'My Inventory', icon: 'grid_view' },
   { path: '/trade', label: 'Trade Portal', icon: 'swap_horiz' },
-  { path: '/active-trades', label: 'Active Trades', icon: 'list' },
+  { path: '/active-trades', label: 'Active Trades', icon: 'show_chart' },
 ] as const;
 
 const displayName = computed(() => {
@@ -164,10 +189,10 @@ const avatarLetter = computed(() => {
   return name.charAt(0).toUpperCase();
 });
 
-function handleLogout(): void {
+async function handleLogout(): Promise<void> {
   authStore.logout();
   profileMenuOpen.value = false;
-  router.replace('/');
+  await router.replace('/');
 }
 
 onMounted(async () => {
@@ -179,26 +204,28 @@ onMounted(async () => {
 
 <style lang="scss" scoped>
 .dt-header {
-  background: var(--dt-color-surface);
+  background: var(--dt-color-deep-navy);
   border-bottom: 1px solid var(--dt-color-border-glass);
 }
 
 .dt-header__toolbar {
   min-height: 56px;
-  padding-left: 16px;
-  padding-right: 16px;
+  padding-left: 20px;
+  padding-right: 20px;
 }
 
 .dt-header__brand {
   text-decoration: none;
   color: var(--dt-text-primary);
-  gap: 10px;
+  gap: 12px;
 }
 
 .dt-header__logo {
-  width: 32px;
-  height: 32px;
-  color: var(--dt-color-cyber-blue);
+  width: 36px;
+  height: 36px;
+  color: var(--dt-color-millennium-gold);
+  filter: drop-shadow(0 0 8px rgba(255, 215, 0, 0.4));
+  flex-shrink: 0;
 
   svg {
     width: 100%;
@@ -207,45 +234,70 @@ onMounted(async () => {
 }
 
 .dt-header__title {
-  font-size: 1.1rem;
+  font-size: 1.15rem;
   font-weight: 700;
   letter-spacing: 0.12em;
   color: var(--dt-text-primary);
+  text-shadow: 0 0 20px rgba(249, 250, 251, 0.15);
 }
 
 .dt-header__nav {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 2px;
 }
 
 .dt-header__nav-link {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 8px 12px;
-  border-radius: 6px;
-  color: var(--dt-text-muted);
+  gap: 8px;
+  padding: 8px 14px;
+  border-radius: 8px;
+  color: var(--dt-color-cyber-blue);
   text-decoration: none;
-  font-size: 0.9rem;
+  font-size: 0.95rem;
+  font-family: 'Rajdhani', system-ui, sans-serif;
+  font-weight: 500;
   transition: color 0.2s, background 0.2s;
 
   &:hover {
     color: var(--dt-text-primary);
-    background: var(--dt-color-surface-soft);
+    background: rgba(255, 255, 255, 0.04);
   }
 
   &.dt-header__nav-link--active {
-    color: var(--dt-color-cyber-blue);
-    background: rgba(0, 242, 255, 0.08);
+    color: var(--dt-color-millennium-gold);
+    background: rgba(255, 215, 0, 0.06);
   }
 }
 
-.dt-header__cta {
-  color: var(--dt-color-deep-navy);
-  background: var(--dt-color-millennium-gold);
+.dt-header__nav-icon-hexagon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+
+  svg {
+    width: 100%;
+    height: 100%;
+  }
+}
+
+.dt-header__cta.q-btn {
+  color: var(--dt-color-cyber-blue) !important;
+  background: rgba(5, 22, 40, 0.98) !important;
+  border: 1px solid var(--dt-color-cyber-blue);
+  border-radius: 8px;
   font-weight: 600;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.04em;
+  padding: 8px 16px;
+  box-shadow: 0 0 12px rgba(0, 242, 255, 0.25);
+
+  &:hover {
+    background: rgba(0, 242, 255, 0.08) !important;
+    box-shadow: 0 0 16px rgba(0, 242, 255, 0.35);
+  }
 }
 
 .dt-header__profile-btn {
@@ -264,10 +316,10 @@ onMounted(async () => {
 }
 
 .dt-header__drawer {
-  background: var(--dt-color-surface);
+  background: var(--dt-color-deep-navy);
 }
 
 .dt-header__drawer-item--active {
-  color: var(--dt-color-cyber-blue);
+  color: var(--dt-color-millennium-gold);
 }
 </style>
