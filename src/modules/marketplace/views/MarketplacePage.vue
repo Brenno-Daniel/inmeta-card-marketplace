@@ -1,43 +1,33 @@
 <template>
   <q-page class="q-pa-none">
-    <section class="dt-hero-bg q-px-lg q-py-xl">
-      <div class="row items-center justify-between q-gutter-xl">
-        <div class="column q-gutter-y-md">
-          <div class="dt-heading-orbitron text-h4 text-weight-bold">
-            <span class="dt-glow-text-cyan">The Global Duelist</span>
-            <span class="q-ml-xs dt-glow-text-gold">Hub</span>
-          </div>
-          <div class="dt-text-muted text-body2" style="max-width: 460px">
-            Exchange your rarest cards in a secure, holographic marketplace. Connect
-            with duelists worldwide and perfect your deck.
-          </div>
-          <div class="row items-center q-gutter-md">
-            <q-btn
-              color="secondary"
-              text-color="dark"
-              rounded
-              no-caps
-              class="dt-holo-glow"
-              label="Join Duelist Hub"
-              to="/auth"
-            />
-            <div class="row items-center q-gutter-xs text-caption dt-text-muted">
-              <q-icon name="lens" size="10px" color="primary" />
-              <span>{{ activeTradesLabel }}</span>
-            </div>
-          </div>
+    <!-- Hero Section -->
+    <section class="dt-hero-bg hero-section">
+      <div class="hero-section__content column items-center text-center q-gutter-y-md">
+        <h1 class="dt-heading-orbitron hero-section__title text-weight-bold">
+          <span class="dt-glow-text-gold">THE GLOBAL </span>
+          <span class="dt-glow-text-cyan">DUELIST </span>
+          <span class="dt-glow-text-gold">HUB</span>
+        </h1>
+        <p class="hero-section__subtitle">
+          Exchange your rarest cards in a secure, holographic marketplace. Connect
+          with duelists worldwide and perfect your deck.
+        </p>
+        <div class="hero-section__chip row items-center no-wrap">
+          <span class="hero-section__chip-dot" aria-hidden="true" />
+          <span class="hero-section__chip-text">{{ activeTradesChipLabel }}</span>
         </div>
       </div>
     </section>
 
-    <section class="q-px-lg q-pb-xl q-pt-lg">
-      <div class="row items-center justify-between q-mb-md">
-        <div class="row items-center q-gutter-sm">
-          <q-badge color="secondary" text-color="dark" class="q-py-md" />
-          <div class="dt-heading-orbitron text-subtitle1">Live Marketplace</div>
-          <q-badge color="secondary" text-color="dark" class="q-ml-sm">
-            {{ tradesCountLabel }}
-          </q-badge>
+    <!-- Live Marketplace -->
+    <section class="marketplace-section">
+      <div class="marketplace-section__header row items-center justify-between">
+        <div class="row items-center no-wrap marketplace-section__title-wrap">
+          <div class="marketplace-section__title-bar" aria-hidden="true" />
+          <h2 class="dt-heading-orbitron marketplace-section__title">
+            <span class="dt-glow-text-gold">Live</span>
+            <span class="marketplace-section__title-suffix"> Marketplace</span>
+          </h2>
         </div>
 
         <q-select
@@ -47,9 +37,13 @@
           borderless
           options-dense
           :options="sortOptions"
+          option-value="value"
+          option-label="label"
           emit-value
           map-options
-          class="bg-transparent text-caption"
+          class="marketplace-section__sort"
+          behavior="menu"
+          :display-value="sortByDisplayValue"
         />
       </div>
 
@@ -72,96 +66,82 @@
       </div>
 
       <div v-else class="marketplace-grid q-mt-md">
-        <q-card
+        <article
           v-for="trade in sortedTrades"
           :key="trade.id"
-          flat
-          bordered
-          class="dt-glass-surface dt-holo-border marketplace-card"
+          class="trade-card dt-glass-surface dt-holo-border"
         >
-          <q-card-section class="q-pb-sm">
-            <div class="row items-center justify-between q-gutter-sm">
-              <div class="row items-center q-gutter-sm">
-                <q-avatar size="32px" color="secondary" text-color="dark">
-                  {{ trade.user.name.charAt(0).toUpperCase() }}
-                </q-avatar>
-                <div class="column">
-                  <div class="text-body2 text-weight-medium">
-                    {{ trade.user.name }}
-                  </div>
-                  <div class="dt-text-muted text-caption">
-                    {{ formatRelativeTime(trade.createdAt) }}
-                  </div>
-                </div>
-              </div>
-
-              <q-badge outline color="secondary" text-color="secondary">
-                {{ trade.tradeCards.length }} cards linked
-              </q-badge>
-            </div>
-          </q-card-section>
-
-          <q-separator dark />
-
-          <q-card-section class="q-pt-md">
-            <div class="row items-stretch q-gutter-md">
-              <div class="column col-5 q-gutter-y-xs">
-                <div class="text-caption text-uppercase text-grey-4">Offering</div>
-                <div class="row q-col-gutter-sm">
-                  <div
-                    v-for="card in offeringForTrade(trade.id)"
-                    :key="card.id"
-                    class="col-12"
-                  >
-                    <YugiohCard
-                      :title="card.name"
-                      :image-url="card.imageUrl"
-                      :description="card.description"
-                      rarity-label="Offering"
-                      rarity-variant="ultra-rare"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              <div class="column col-auto flex flex-center">
-                <q-icon name="arrow_forward" size="36px" color="primary" />
-              </div>
-
-              <div class="column col-5 q-gutter-y-xs">
-                <div class="text-caption text-uppercase text-grey-4">
-                  Requesting
-                </div>
-                <div class="row q-col-gutter-sm">
-                  <div
-                    v-for="card in requestingForTrade(trade.id)"
-                    :key="card.id"
-                    class="col-12"
-                  >
-                    <YugiohCard
-                      :title="card.name"
-                      :image-url="card.imageUrl"
-                      :description="card.description"
-                      rarity-label="Requested"
-                      rarity-variant="secret-rare"
-                    />
-                  </div>
-                </div>
+          <!-- Top: User avatar + name + time -->
+          <header class="trade-card__header">
+            <div class="row items-center q-gutter-sm">
+              <q-avatar size="36px" class="trade-card__avatar" color="primary" text-color="dark">
+                {{ trade.user.name.charAt(0).toUpperCase() }}
+              </q-avatar>
+              <div class="column q-gutter-none">
+                <span class="trade-card__username text-body2 text-weight-medium">
+                  {{ trade.user.name }}
+                </span>
+                <span class="trade-card__time dt-text-muted text-caption">
+                  {{ formatRelativeTime(trade.createdAt) }}
+                </span>
               </div>
             </div>
-          </q-card-section>
+            <span class="trade-card__linked dt-text-muted text-caption">
+              {{ trade.tradeCards.length }} linked
+            </span>
+          </header>
 
-          <q-card-actions align="right" class="q-pt-none q-pb-md q-px-md">
+          <!-- Middle: OFFERING | arrow | REQUESTING -->
+          <div class="trade-card__body">
+            <div class="trade-card__column trade-card__column--offering">
+              <span class="trade-card__label trade-card__label--offering">OFFERING</span>
+              <div class="trade-card__card-slot">
+                <YugiohCard
+                  v-if="firstOffering(trade)"
+                  variant="compact"
+                  :title="firstOffering(trade)!.name"
+                  :image-url="firstOffering(trade)!.imageUrl"
+                  rarity-label="ULTRA RARE"
+                  rarity-variant="ultra-rare"
+                  :interactive="false"
+                />
+                <div v-else class="trade-card__empty-slot">—</div>
+              </div>
+            </div>
+
+            <div class="trade-card__arrow" aria-hidden="true">
+              <q-icon name="arrow_forward" size="28px" />
+            </div>
+
+            <div class="trade-card__column trade-card__column--requesting">
+              <span class="trade-card__label trade-card__label--requesting">REQUESTING</span>
+              <div class="trade-card__card-slot">
+                <YugiohCard
+                  v-if="firstRequesting(trade)"
+                  variant="compact"
+                  :title="firstRequesting(trade)!.name"
+                  :image-url="firstRequesting(trade)!.imageUrl"
+                  rarity-label="SECRET RARE"
+                  rarity-variant="secret-rare"
+                  :interactive="false"
+                />
+                <div v-else class="trade-card__empty-slot">—</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Bottom: Initiate Trade -->
+          <footer class="trade-card__footer">
             <q-btn
-              color="secondary"
-              text-color="dark"
+              class="trade-card__cta"
               no-caps
-              rounded
+              flat
+              unelevated
               label="Initiate Trade"
               to="/trade"
             />
-          </q-card-actions>
-        </q-card>
+          </footer>
+        </article>
       </div>
 
       <div
@@ -197,8 +177,8 @@ interface SortOption {
 }
 
 const sortOptions: SortOption[] = [
-  { label: 'Sort by Newest', value: 'newest' },
-  { label: 'Sort by Oldest', value: 'oldest' },
+  { label: 'Newest', value: 'newest' },
+  { label: 'Oldest', value: 'oldest' },
 ];
 
 const sortOption = ref<SortOptionValue>('newest');
@@ -214,12 +194,13 @@ const sortedTrades = computed<TradeListItem[]>(() => {
   });
 });
 
-const tradesCountLabel = computed(
-  () => `${marketplaceStore.trades.length} active trades`,
-);
+const activeTradesChipLabel = computed(() => {
+  const n = marketplaceStore.trades.length;
+  return `${n.toLocaleString('en-US')} ACTIVE TRADES`;
+});
 
-const activeTradesLabel = computed(
-  () => `${marketplaceStore.trades.length} active trades`,
+const sortByDisplayValue = computed(
+  () => `Sort by: ${sortOptions.find((o) => o.value === sortOption)?.label ?? 'Newest'}`,
 );
 
 onMounted(async () => {
@@ -250,12 +231,12 @@ function formatRelativeTime(isoDate: string): string {
   return `${days} day${days > 1 ? 's' : ''} ago`;
 }
 
-function offeringForTrade(tradeId: string): Card[] {
-  return extractCardsByType(tradeId, 'OFFERING');
+function firstOffering(trade: TradeListItem): Card | undefined {
+  return extractCardsByType(trade.id, 'OFFERING')[0];
 }
 
-function requestingForTrade(tradeId: string): Card[] {
-  return extractCardsByType(tradeId, 'RECEIVING');
+function firstRequesting(trade: TradeListItem): Card | undefined {
+  return extractCardsByType(trade.id, 'RECEIVING')[0];
 }
 
 function extractCardsByType(tradeId: string, type: TradeCard['type']): Card[] {
@@ -271,15 +252,232 @@ function extractCardsByType(tradeId: string, type: TradeCard['type']): Card[] {
 }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
+/* Hero Section */
+.hero-section {
+  min-height: 280px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 24px;
+}
+
+.hero-section__content {
+  max-width: 640px;
+}
+
+.hero-section__title {
+  font-size: clamp(1.5rem, 4vw, 2.25rem);
+  line-height: 1.2;
+  letter-spacing: 0.14em;
+  margin: 0;
+}
+
+.hero-section__subtitle {
+  font-family: 'Rajdhani', system-ui, sans-serif;
+  font-size: 1rem;
+  line-height: 1.5;
+  color: var(--dt-text-primary);
+  margin: 0;
+  max-width: 480px;
+}
+
+.hero-section__chip {
+  padding: 8px 16px;
+  border-radius: 8px;
+  background: rgba(11, 16, 32, 0.9);
+  border: 1px solid var(--dt-color-border-glass);
+  gap: 8px;
+}
+
+.hero-section__chip-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--dt-color-cyber-blue);
+  box-shadow: 0 0 8px rgba(0, 242, 255, 0.6);
+}
+
+.hero-section__chip-text {
+  font-family: 'Rajdhani', system-ui, sans-serif;
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: var(--dt-text-primary);
+}
+
+/* Live Marketplace section */
+.marketplace-section {
+  padding: 24px 20px 40px;
+}
+
+.marketplace-section__header {
+  margin-bottom: 20px;
+}
+
+.marketplace-section__title-wrap {
+  gap: 12px;
+  align-items: center;
+}
+
+.marketplace-section__title-bar {
+  width: 4px;
+  height: 28px;
+  border-radius: 2px;
+  background: var(--dt-color-millennium-gold);
+}
+
+.marketplace-section__title {
+  font-size: 1.25rem;
+  letter-spacing: 0.1em;
+  margin: 0;
+}
+
+.marketplace-section__title-suffix {
+  color: var(--dt-text-primary);
+}
+
+.marketplace-section__sort {
+  max-width: 180px;
+  border-radius: 8px;
+  background: var(--dt-color-surface-soft);
+  border: 1px solid var(--dt-color-border-glass);
+}
+
+.marketplace-section__sort :deep(.q-field__control) {
+  color: var(--dt-text-primary);
+}
+
+/* Trade card */
 .marketplace-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
   gap: 20px;
 }
 
-.marketplace-card {
-  height: 100%;
+.trade-card {
+  border-radius: 18px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  padding: 16px;
+}
+
+.trade-card__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.trade-card__avatar {
+  border: 1px solid var(--dt-color-millennium-gold);
+}
+
+.trade-card__username {
+  color: var(--dt-text-primary);
+}
+
+.trade-card__time {
+  margin-top: 2px;
+}
+
+.trade-card__linked {
+  font-size: 0.75rem;
+}
+
+.trade-card__body {
+  display: flex;
+  align-items: stretch;
+  gap: 12px;
+  margin-bottom: 16px;
+  min-height: 0;
+}
+
+@media (max-width: 400px) {
+  .trade-card__body {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .trade-card__column {
+    max-width: 200px;
+    width: 100%;
+  }
+
+  .trade-card__arrow {
+    transform: rotate(90deg);
+  }
+}
+
+.trade-card__column {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.trade-card__label {
+  font-family: 'Orbitron', system-ui, sans-serif;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+}
+
+.trade-card__label--offering {
+  color: var(--dt-color-cyber-blue);
+}
+
+.trade-card__label--requesting {
+  color: var(--dt-color-millennium-gold);
+}
+
+.trade-card__card-slot {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.trade-card__empty-slot {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--dt-text-muted);
+  font-size: 0.9rem;
+  border: 1px dashed var(--dt-color-border-glass);
+  border-radius: 10px;
+}
+
+.trade-card__arrow {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--dt-color-cyber-blue);
+}
+
+.trade-card__footer {
+  margin-top: auto;
+}
+
+.trade-card__cta.q-btn {
+  width: 100%;
+  border-radius: 10px;
+  background: var(--dt-color-dark-purple);
+  border: 1px solid var(--dt-color-millennium-gold);
+  color: var(--dt-text-primary);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+
+.trade-card__cta.q-btn:hover {
+  background: rgba(29, 17, 53, 0.9);
+  box-shadow: 0 0 12px rgba(255, 215, 0, 0.2);
 }
 </style>
 
