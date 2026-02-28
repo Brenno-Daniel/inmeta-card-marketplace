@@ -14,12 +14,10 @@
       <div class="inventory-header__xp">
         <span class="inventory-header__xp-label">XP PROGRESS</span>
         <div class="inventory-header__xp-bar-wrap">
-          <q-linear-progress
-            :value="xpProgress"
-            class="inventory-header__xp-bar"
-            size="10px"
-          />
-          <span class="inventory-header__xp-text">{{ xpCurrent.toLocaleString() }} / {{ xpMax.toLocaleString() }}</span>
+          <q-linear-progress :value="xpProgress" class="inventory-header__xp-bar" size="10px" />
+          <span class="inventory-header__xp-text"
+            >{{ xpCurrent.toLocaleString() }} / {{ xpMax.toLocaleString() }}</span
+          >
         </div>
       </div>
     </header>
@@ -169,10 +167,7 @@
             />
           </div>
 
-          <div
-            v-if="catalogMore && !catalogLoading"
-            class="row justify-center q-mt-md"
-          >
+          <div v-if="catalogMore && !catalogLoading" class="row justify-center q-mt-md">
             <q-btn
               flat
               color="primary"
@@ -238,12 +233,12 @@ const RARITY_OPTIONS: { label: string; variant: YugiohRarity }[] = [
 
 function getRarityLabel(card: Card): string {
   const idx = card.id.split('').reduce((a, c) => a + c.charCodeAt(0), 0) % RARITY_OPTIONS.length;
-  return RARITY_OPTIONS[idx].label;
+  return RARITY_OPTIONS[idx]?.label ?? 'COMMON';
 }
 
 function getRarityVariant(card: Card): YugiohRarity {
   const idx = card.id.split('').reduce((a, c) => a + c.charCodeAt(0), 0) % RARITY_OPTIONS.length;
-  return RARITY_OPTIONS[idx].variant;
+  return RARITY_OPTIONS[idx]?.variant ?? 'common';
 }
 
 onMounted(async () => {
@@ -385,11 +380,7 @@ async function handleAddSelected(): Promise<void> {
   }
 
   :deep(.q-linear-progress__model) {
-    background: linear-gradient(
-      90deg,
-      var(--dt-color-cyber-blue),
-      rgba(0, 242, 255, 0.6)
-    );
+    background: linear-gradient(90deg, var(--dt-color-cyber-blue), rgba(0, 242, 255, 0.6));
   }
 }
 
@@ -476,7 +467,10 @@ async function handleAddSelected(): Promise<void> {
   background: rgba(11, 16, 32, 0.4);
   color: var(--dt-text-muted);
   cursor: pointer;
-  transition: border-color 0.2s, color 0.2s, background 0.2s;
+  transition:
+    border-color 0.2s,
+    color 0.2s,
+    background 0.2s;
 }
 
 .inventory-add-slot:hover {

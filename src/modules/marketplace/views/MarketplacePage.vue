@@ -9,8 +9,8 @@
           <span class="dt-glow-text-gold">HUB</span>
         </h1>
         <p class="hero-section__subtitle">
-          Exchange your rarest cards in a secure, holographic marketplace. Connect
-          with duelists worldwide and perfect your deck.
+          Exchange your rarest cards in a secure, holographic marketplace. Connect with duelists
+          worldwide and perfect your deck.
         </p>
         <div class="hero-section__chip row items-center no-wrap">
           <span class="hero-section__chip-dot" aria-hidden="true" />
@@ -52,9 +52,7 @@
       </q-inner-loading>
 
       <div v-if="!marketplaceStore.isLoading && !sortedTrades.length" class="q-mt-xl">
-        <div
-          class="dt-glass-surface dt-holo-border q-pa-xl flex flex-center text-center"
-        >
+        <div class="dt-glass-surface dt-holo-border q-pa-xl flex flex-center text-center">
           <div class="column items-center q-gutter-y-sm">
             <q-icon name="visibility_off" size="40px" color="primary" />
             <div class="text-subtitle2">No trades published yet</div>
@@ -144,10 +142,7 @@
         </article>
       </div>
 
-      <div
-        v-if="marketplaceStore.more && sortedTrades.length"
-        class="row justify-center q-mt-lg"
-      >
+      <div v-if="marketplaceStore.more && sortedTrades.length" class="row justify-center q-mt-lg">
         <q-btn
           flat
           color="primary"
@@ -200,7 +195,7 @@ const activeTradesChipLabel = computed(() => {
 });
 
 const sortByDisplayValue = computed(
-  () => `Sort by: ${sortOptions.find((o) => o.value === sortOption)?.label ?? 'Newest'}`,
+  () => `Sort by: ${sortOptions.find((o) => o.value === sortOption.value)?.label ?? 'Newest'}`,
 );
 
 onMounted(async () => {
@@ -480,4 +475,3 @@ function extractCardsByType(tradeId: string, type: TradeCard['type']): Card[] {
   box-shadow: 0 0 12px rgba(255, 215, 0, 0.2);
 }
 </style>
-

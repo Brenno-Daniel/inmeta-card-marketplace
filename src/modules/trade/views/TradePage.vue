@@ -1,12 +1,10 @@
 <template>
   <q-page class="trade-page">
     <header class="trade-page__header column items-center text-center q-gutter-y-sm">
-      <h1 class="dt-heading-orbitron trade-page__title dt-glow-text-gold">
-        Create Trade Offer
-      </h1>
+      <h1 class="dt-heading-orbitron trade-page__title dt-glow-text-gold">Create Trade Offer</h1>
       <p class="trade-page__subtitle dt-text-muted">
-        Select a card from your inventory to offer as tribute, and choose the card
-        you desire from the global database.
+        Select a card from your inventory to offer as tribute, and choose the card you desire from
+        the global database.
       </p>
     </header>
 
@@ -29,7 +27,14 @@
           >
             <q-icon name="inventory_2" size="40px" class="dt-text-muted" />
             <span class="text-caption dt-text-muted">No cards in your vault.</span>
-            <q-btn flat no-caps color="primary" label="Go to Inventory" to="/inventory" class="q-mt-sm" />
+            <q-btn
+              flat
+              no-caps
+              color="primary"
+              label="Go to Inventory"
+              to="/inventory"
+              class="q-mt-sm"
+            />
           </div>
 
           <div v-else class="trade-wizard__grid">
@@ -118,8 +123,8 @@
       <div class="trade-page__info dt-glass-surface--soft">
         <q-icon name="info" size="20px" class="trade-page__info-icon" />
         <span class="dt-text-muted text-caption">
-          By initiating this trade, your tribute card will be locked until the trade
-          is accepted or cancelled.
+          By initiating this trade, your tribute card will be locked until the trade is accepted or
+          cancelled.
         </span>
       </div>
       <q-btn
@@ -165,12 +170,12 @@ const RARITY_OPTIONS: { label: string; variant: YugiohRarity }[] = [
 
 function getRarityLabel(card: Card): string {
   const idx = card.id.split('').reduce((a, c) => a + c.charCodeAt(0), 0) % RARITY_OPTIONS.length;
-  return RARITY_OPTIONS[idx].label;
+  return RARITY_OPTIONS[idx]?.label ?? 'COMMON';
 }
 
 function getRarityVariant(card: Card): YugiohRarity {
   const idx = card.id.split('').reduce((a, c) => a + c.charCodeAt(0), 0) % RARITY_OPTIONS.length;
-  return RARITY_OPTIONS[idx].variant;
+  return RARITY_OPTIONS[idx]?.variant ?? 'common';
 }
 
 const filteredCatalog = computed(() => {
@@ -179,9 +184,7 @@ const filteredCatalog = computed(() => {
   return tradeStore.catalogCards.filter((c) => c.name.toLowerCase().includes(q));
 });
 
-const actionButtonLabel = computed(() =>
-  tradeStore.canSubmit ? 'CREATE TRADE' : 'SELECT CARDS',
-);
+const actionButtonLabel = computed(() => (tradeStore.canSubmit ? 'CREATE TRADE' : 'SELECT CARDS'));
 
 onMounted(async () => {
   if (!authStore.user && authStore.token) {
@@ -196,15 +199,11 @@ onMounted(async () => {
 });
 
 function selectOffering(cardId: string): void {
-  tradeStore.setSelectedOffering(
-    tradeStore.selectedOfferingId === cardId ? null : cardId,
-  );
+  tradeStore.setSelectedOffering(tradeStore.selectedOfferingId === cardId ? null : cardId);
 }
 
 function selectReceiving(cardId: string): void {
-  tradeStore.setSelectedReceiving(
-    tradeStore.selectedReceivingId === cardId ? null : cardId,
-  );
+  tradeStore.setSelectedReceiving(tradeStore.selectedReceivingId === cardId ? null : cardId);
 }
 
 async function loadMore(): Promise<void> {
