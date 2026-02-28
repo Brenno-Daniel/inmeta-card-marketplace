@@ -1,19 +1,16 @@
 <template>
   <!-- Inventory variant: deck box card (image + name + rarity, bordered) -->
   <div
-    v-else-if="variant === 'inventory'"
+    v-if="variant === 'inventory'"
     class="dt-yugioh-card dt-yugioh-card--inventory"
     :class="cardClasses"
     @click="handleClick"
   >
     <div class="dt-yugioh-card__image-wrapper">
-      <q-img
-        :src="imageUrl"
-        :alt="title"
-        class="dt-yugioh-card__image"
-        ratio="2/3"
-        loading="lazy"
-      >
+      <div v-if="selected" class="dt-yugioh-card__selection-overlay" aria-hidden="true">
+        <q-icon name="check_circle" size="24px" class="dt-yugioh-card__selection-check" />
+      </div>
+      <q-img :src="imageUrl" :alt="title" class="dt-yugioh-card__image" ratio="2/3" loading="lazy">
         <template #error>
           <div class="dt-yugioh-card__image-fallback">
             <q-icon name="image_not_supported" size="24px" />
@@ -43,13 +40,10 @@
     @click="handleClick"
   >
     <div class="dt-yugioh-card__image-wrapper">
-      <q-img
-        :src="imageUrl"
-        :alt="title"
-        class="dt-yugioh-card__image"
-        ratio="2/3"
-        loading="lazy"
-      >
+      <div v-if="selected" class="dt-yugioh-card__selection-overlay" aria-hidden="true">
+        <q-icon name="check_circle" size="20px" class="dt-yugioh-card__selection-check" />
+      </div>
+      <q-img :src="imageUrl" :alt="title" class="dt-yugioh-card__image" ratio="2/3" loading="lazy">
         <template #error>
           <div class="dt-yugioh-card__image-fallback">
             <q-icon name="image_not_supported" size="24px" />
@@ -81,13 +75,7 @@
     @click="handleClick"
   >
     <div class="dt-yugioh-card__image-wrapper">
-      <q-img
-        :src="imageUrl"
-        :alt="title"
-        class="dt-yugioh-card__image"
-        ratio="2/3"
-        loading="lazy"
-      >
+      <q-img :src="imageUrl" :alt="title" class="dt-yugioh-card__image" ratio="2/3" loading="lazy">
         <template #error>
           <div class="dt-yugioh-card__image-fallback">
             <q-icon name="image_not_supported" size="32px" />
@@ -95,11 +83,7 @@
         </template>
       </q-img>
 
-      <div
-        v-if="badgeLabel"
-        class="dt-yugioh-card__rarity"
-        :data-variant="rarityVariant"
-      >
+      <div v-if="badgeLabel" class="dt-yugioh-card__rarity" :data-variant="rarityVariant">
         <span>{{ badgeLabel }}</span>
       </div>
     </div>
@@ -125,12 +109,7 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 
-type YugiohRarity =
-  | 'common'
-  | 'rare'
-  | 'super-rare'
-  | 'ultra-rare'
-  | 'secret-rare';
+type YugiohRarity = 'common' | 'rare' | 'super-rare' | 'ultra-rare' | 'secret-rare';
 
 type YugiohCardVariant = 'default' | 'compact' | 'inventory';
 
@@ -179,6 +158,23 @@ function handleClick(): void {
   border-radius: 14px 14px 0 0;
 }
 
+.dt-yugioh-card__selection-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.35);
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+  padding: 8px;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.dt-yugioh-card__selection-check {
+  color: var(--dt-color-millennium-gold);
+  filter: drop-shadow(0 0 4px rgba(255, 215, 0, 0.8));
+}
+
 .dt-yugioh-card__image {
   transition: transform 260ms ease-out;
 }
@@ -192,11 +188,7 @@ function handleClick(): void {
   align-items: center;
   justify-content: center;
   height: 100%;
-  background: linear-gradient(
-    135deg,
-    rgba(0, 242, 255, 0.08),
-    rgba(24, 28, 53, 0.9)
-  );
+  background: linear-gradient(135deg, rgba(0, 242, 255, 0.08), rgba(24, 28, 53, 0.9));
 }
 
 .dt-yugioh-card__rarity {
@@ -211,11 +203,7 @@ function handleClick(): void {
   text-transform: uppercase;
   border-radius: 999px;
   border: 1px solid rgba(255, 255, 255, 0.15);
-  background: linear-gradient(
-    90deg,
-    rgba(0, 242, 255, 0.85),
-    rgba(255, 215, 0, 0.9)
-  );
+  background: linear-gradient(90deg, rgba(0, 242, 255, 0.85), rgba(255, 215, 0, 0.9));
   color: #020617;
   box-shadow:
     0 0 10px rgba(0, 242, 255, 0.7),
@@ -223,36 +211,20 @@ function handleClick(): void {
 }
 
 .dt-yugioh-card__rarity[data-variant='common'] {
-  background: linear-gradient(
-    90deg,
-    rgba(148, 163, 184, 0.8),
-    rgba(55, 65, 81, 0.9)
-  );
+  background: linear-gradient(90deg, rgba(148, 163, 184, 0.8), rgba(55, 65, 81, 0.9));
   color: #e5e7eb;
 }
 
 .dt-yugioh-card__rarity[data-variant='rare'] {
-  background: linear-gradient(
-    90deg,
-    rgba(56, 189, 248, 0.9),
-    rgba(37, 99, 235, 0.95)
-  );
+  background: linear-gradient(90deg, rgba(56, 189, 248, 0.9), rgba(37, 99, 235, 0.95));
 }
 
 .dt-yugioh-card__rarity[data-variant='super-rare'] {
-  background: linear-gradient(
-    120deg,
-    rgba(129, 140, 248, 0.95),
-    rgba(56, 189, 248, 0.9)
-  );
+  background: linear-gradient(120deg, rgba(129, 140, 248, 0.95), rgba(56, 189, 248, 0.9));
 }
 
 .dt-yugioh-card__rarity[data-variant='ultra-rare'] {
-  background: linear-gradient(
-    120deg,
-    rgba(234, 179, 8, 0.95),
-    rgba(251, 191, 36, 0.95)
-  );
+  background: linear-gradient(120deg, rgba(234, 179, 8, 0.95), rgba(251, 191, 36, 0.95));
 }
 
 .dt-yugioh-card__rarity[data-variant='secret-rare'] {
@@ -295,6 +267,11 @@ function handleClick(): void {
   border: none;
   box-shadow: none;
   cursor: default;
+}
+
+.dt-yugioh-card--compact.dt-yugioh-card--selected .dt-yugioh-card__image-wrapper {
+  border-color: var(--dt-color-millennium-gold);
+  box-shadow: 0 0 0 1px rgba(255, 215, 0, 0.5);
 }
 
 .dt-yugioh-card--compact .dt-yugioh-card__image-wrapper {
@@ -364,12 +341,19 @@ function handleClick(): void {
   overflow: hidden;
   background: rgba(11, 16, 32, 0.6);
   cursor: pointer;
-  transition: border-color 0.2s, box-shadow 0.2s;
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s;
 }
 
 .dt-yugioh-card--inventory:hover {
   border-color: var(--dt-color-cyber-blue);
   box-shadow: 0 0 12px rgba(0, 242, 255, 0.2);
+}
+
+.dt-yugioh-card--inventory.dt-yugioh-card--selected {
+  border-color: var(--dt-color-millennium-gold);
+  box-shadow: 0 0 0 1px rgba(255, 215, 0, 0.5);
 }
 
 .dt-yugioh-card--inventory .dt-yugioh-card__image-wrapper {
@@ -416,4 +400,3 @@ function handleClick(): void {
   border-color: rgba(156, 163, 175, 0.3);
 }
 </style>
-
