@@ -1,7 +1,43 @@
 <template>
+  <!-- Inventory variant: deck box card (image + name + rarity, bordered) -->
+  <div
+    v-else-if="variant === 'inventory'"
+    class="dt-yugioh-card dt-yugioh-card--inventory"
+    :class="cardClasses"
+    @click="handleClick"
+  >
+    <div class="dt-yugioh-card__image-wrapper">
+      <q-img
+        :src="imageUrl"
+        :alt="title"
+        class="dt-yugioh-card__image"
+        ratio="2/3"
+        loading="lazy"
+      >
+        <template #error>
+          <div class="dt-yugioh-card__image-fallback">
+            <q-icon name="image_not_supported" size="24px" />
+          </div>
+        </template>
+      </q-img>
+    </div>
+    <div class="dt-yugioh-card__body">
+      <div class="dt-yugioh-card__title dt-heading-orbitron">
+        {{ title }}
+      </div>
+      <div
+        v-if="badgeLabel"
+        class="dt-yugioh-card__rarity dt-yugioh-card__rarity--below"
+        :data-variant="rarityVariant"
+      >
+        {{ badgeLabel }}
+      </div>
+    </div>
+  </div>
+
   <!-- Compact variant: image + name + rarity pill (same size for trade columns) -->
   <div
-    v-if="variant === 'compact'"
+    v-else-if="variant === 'compact'"
     class="dt-yugioh-card dt-yugioh-card--compact"
     :class="cardClasses"
     @click="handleClick"
@@ -96,7 +132,7 @@ type YugiohRarity =
   | 'ultra-rare'
   | 'secret-rare';
 
-type YugiohCardVariant = 'default' | 'compact';
+type YugiohCardVariant = 'default' | 'compact' | 'inventory';
 
 interface YugiohCardProps {
   title: string;
@@ -316,6 +352,68 @@ function handleClick(): void {
 
 .dt-yugioh-card__rarity--below[data-variant='common'] {
   background: rgba(148, 163, 184, 0.2);
+}
+
+/* Inventory variant (deck box): bordered card, image + name + rarity */
+.dt-yugioh-card--inventory {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  border-radius: 12px;
+  border: 1px solid rgba(29, 17, 53, 0.9);
+  overflow: hidden;
+  background: rgba(11, 16, 32, 0.6);
+  cursor: pointer;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.dt-yugioh-card--inventory:hover {
+  border-color: var(--dt-color-cyber-blue);
+  box-shadow: 0 0 12px rgba(0, 242, 255, 0.2);
+}
+
+.dt-yugioh-card--inventory .dt-yugioh-card__image-wrapper {
+  border-radius: 12px 12px 0 0;
+  border: none;
+  aspect-ratio: 2 / 3;
+  min-height: 0;
+}
+
+.dt-yugioh-card--inventory .dt-yugioh-card__body {
+  padding: 10px 12px 12px;
+  flex: 0 0 auto;
+}
+
+.dt-yugioh-card--inventory .dt-yugioh-card__title {
+  font-size: 0.82rem;
+  color: var(--dt-text-primary);
+  font-weight: 600;
+  line-height: 1.2;
+  margin-bottom: 6px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.dt-yugioh-card--inventory .dt-yugioh-card__rarity--below[data-variant='ultra-rare'] {
+  color: var(--dt-color-millennium-gold);
+  border-color: rgba(255, 215, 0, 0.4);
+}
+
+.dt-yugioh-card--inventory .dt-yugioh-card__rarity--below[data-variant='secret-rare'] {
+  color: #a78bfa;
+  border-color: rgba(167, 139, 250, 0.4);
+}
+
+.dt-yugioh-card--inventory .dt-yugioh-card__rarity--below[data-variant='super-rare'] {
+  color: var(--dt-color-cyber-blue);
+  border-color: rgba(0, 242, 255, 0.4);
+}
+
+.dt-yugioh-card--inventory .dt-yugioh-card__rarity--below[data-variant='common'] {
+  color: var(--dt-text-muted);
+  border-color: rgba(156, 163, 175, 0.3);
 }
 </style>
 
