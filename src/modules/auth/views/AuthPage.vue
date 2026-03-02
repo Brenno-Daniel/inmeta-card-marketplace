@@ -1,18 +1,6 @@
 <template>
   <q-page class="dt-hero-bg flex flex-center q-pa-md">
     <div class="auth-shell column items-center q-gutter-y-lg">
-      <div class="row items-center q-gutter-x-sm">
-        <div class="auth-logo-glow" />
-        <div class="column">
-          <div class="dt-heading-orbitron auth-logo-text dt-glow-text-gold">
-            DuelTrade
-          </div>
-          <div class="dt-text-muted text-caption">
-            Secure access terminal for elite duelists
-          </div>
-        </div>
-      </div>
-
       <q-card class="dt-glass-surface dt-holo-border auth-card">
         <q-card-section>
           <div class="column q-gutter-y-xs q-mb-md">
@@ -28,14 +16,11 @@
             <div class="column q-gutter-md">
               <q-slide-transition>
                 <div v-if="!isLoginMode" class="column q-gutter-xs">
-                  <div class="text-caption text-uppercase text-grey-4">
-                    Duelist Name
-                  </div>
+                  <div class="text-caption text-uppercase text-grey-4">Duelist Name</div>
                   <q-input
                     v-model="registerForm.name"
                     dense
                     standout="bg-transparent"
-                    bg-color="transparent"
                     color="primary"
                     class="dt-input-glow"
                     autocomplete="username"
@@ -51,14 +36,11 @@
               </q-slide-transition>
 
               <div class="column q-gutter-xs">
-                <div class="text-caption text-uppercase text-grey-4">
-                  Comlink Email
-                </div>
+                <div class="text-caption text-uppercase text-grey-4">Email</div>
                 <q-input
                   v-model="form.email"
                   dense
                   standout="bg-transparent"
-                  bg-color="transparent"
                   color="primary"
                   class="dt-input-glow"
                   autocomplete="email"
@@ -75,9 +57,7 @@
 
               <div class="column q-gutter-xs">
                 <div class="row items-center justify-between">
-                  <div class="text-caption text-uppercase text-grey-4">
-                    Security Code
-                  </div>
+                  <div class="text-caption text-uppercase text-grey-4">Security Code</div>
                   <q-btn
                     v-if="isLoginMode"
                     flat
@@ -91,7 +71,6 @@
                   v-model="form.password"
                   dense
                   standout="bg-transparent"
-                  bg-color="transparent"
                   color="primary"
                   class="dt-input-glow"
                   autocomplete="current-password"
@@ -132,7 +111,7 @@
                 class="q-mt-sm dt-holo-glow"
                 color="secondary"
                 text-color="dark"
-                size="lg"
+                :size="$q.screen.gt.xs ? 'lg' : 'md'"
                 no-caps
                 unelevated
                 rounded
@@ -196,10 +175,8 @@ const isSubmitting = ref(false);
 
 const isLoginMode = computed(() => mode.value === 'login');
 
-const loginSubtitle =
-  'Enter your comlink credentials to access the Duelist Hub.';
-const registerSubtitle =
-  'Initialize a new duelist profile and join the marketplace.';
+const loginSubtitle = 'Enter your comlink credentials to access the Duelist Hub.';
+const registerSubtitle = 'Initialize a new duelist profile and join the marketplace.';
 
 const authError = computed(() => authStore.errorMessage);
 
@@ -254,20 +231,6 @@ async function handleSubmit(): Promise<void> {
   width: 100%;
 }
 
-.auth-logo-glow {
-  width: 40px;
-  height: 40px;
-  border-radius: 999px;
-  background: radial-gradient(circle, #ffd700 0, #facc15 36%, #1d1135 90%);
-  box-shadow:
-    0 0 18px rgba(255, 215, 0, 0.9),
-    0 0 28px rgba(250, 204, 21, 0.8);
-}
-
-.auth-logo-text {
-  font-size: 1.2rem;
-}
-
 .auth-card {
   width: 100%;
 }
@@ -292,6 +255,6 @@ async function handleSubmit(): Promise<void> {
 .dt-input-glow :deep(.q-field__native),
 .dt-input-glow :deep(.q-field__input) {
   padding-inline: 10px;
+  color: var(--dt-text-muted);
 }
 </style>
-

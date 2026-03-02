@@ -10,7 +10,7 @@
       <div v-if="selected" class="dt-yugioh-card__selection-overlay" aria-hidden="true">
         <q-icon name="check_circle" size="24px" class="dt-yugioh-card__selection-check" />
       </div>
-      <q-img :src="imageUrl" :alt="title" class="dt-yugioh-card__image" ratio="2/3" loading="lazy">
+      <q-img :src="imageUrl" :alt="title" class="dt-yugioh-card__image" loading="lazy">
         <template #error>
           <div class="dt-yugioh-card__image-fallback">
             <q-icon name="image_not_supported" size="24px" />
@@ -43,7 +43,7 @@
       <div v-if="selected" class="dt-yugioh-card__selection-overlay" aria-hidden="true">
         <q-icon name="check_circle" size="20px" class="dt-yugioh-card__selection-check" />
       </div>
-      <q-img :src="imageUrl" :alt="title" class="dt-yugioh-card__image" ratio="2/3" loading="lazy">
+      <q-img :src="imageUrl" :alt="title" class="dt-yugioh-card__image" loading="lazy">
         <template #error>
           <div class="dt-yugioh-card__image-fallback">
             <q-icon name="image_not_supported" size="24px" />
@@ -51,7 +51,7 @@
         </template>
       </q-img>
     </div>
-    <div class="dt-yugioh-card__body">
+    <div class="dt-yugioh-card__body q-mt-sm">
       <div class="dt-yugioh-card__title dt-heading-orbitron">
         {{ title }}
       </div>
@@ -202,42 +202,12 @@ function handleClick(): void {
   letter-spacing: 0.12em;
   text-transform: uppercase;
   border-radius: 999px;
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  background: linear-gradient(90deg, rgba(0, 242, 255, 0.85), rgba(255, 215, 0, 0.9));
-  color: #020617;
-  box-shadow:
-    0 0 10px rgba(0, 242, 255, 0.7),
-    0 0 18px rgba(255, 215, 0, 0.8);
-}
-
-.dt-yugioh-card__rarity[data-variant='common'] {
-  background: linear-gradient(90deg, rgba(148, 163, 184, 0.8), rgba(55, 65, 81, 0.9));
-  color: #e5e7eb;
-}
-
-.dt-yugioh-card__rarity[data-variant='rare'] {
-  background: linear-gradient(90deg, rgba(56, 189, 248, 0.9), rgba(37, 99, 235, 0.95));
-}
-
-.dt-yugioh-card__rarity[data-variant='super-rare'] {
-  background: linear-gradient(120deg, rgba(129, 140, 248, 0.95), rgba(56, 189, 248, 0.9));
-}
-
-.dt-yugioh-card__rarity[data-variant='ultra-rare'] {
-  background: linear-gradient(120deg, rgba(234, 179, 8, 0.95), rgba(251, 191, 36, 0.95));
-}
-
-.dt-yugioh-card__rarity[data-variant='secret-rare'] {
-  background: linear-gradient(
-    120deg,
-    rgba(236, 72, 153, 0.95),
-    rgba(59, 130, 246, 0.95),
-    rgba(45, 212, 191, 0.95)
-  );
 }
 
 .dt-yugioh-card__body {
   padding: 12px 14px 14px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 6px;
 }
 
 .dt-yugioh-card__title {
@@ -307,28 +277,27 @@ function handleClick(): void {
   padding: 4px 8px;
   font-size: 0.6rem;
   border-radius: 6px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
   color: #fff;
 }
 
 .dt-yugioh-card__rarity--below[data-variant='ultra-rare'] {
-  background: rgba(0, 242, 255, 0.25);
+  color: var(--dt-color-millennium-gold);
 }
 
 .dt-yugioh-card__rarity--below[data-variant='secret-rare'] {
-  background: rgba(29, 17, 53, 0.95);
+  color: #a78bfa;
 }
 
 .dt-yugioh-card__rarity--below[data-variant='super-rare'] {
-  background: rgba(34, 197, 94, 0.35);
+  color: var(--dt-color-cyber-blue);
 }
 
 .dt-yugioh-card__rarity--below[data-variant='rare'] {
-  background: rgba(56, 189, 248, 0.25);
+  color: var(--dt-color-cyber-blue);
 }
 
 .dt-yugioh-card__rarity--below[data-variant='common'] {
-  background: rgba(148, 163, 184, 0.2);
+  color: var(--dt-text-muted);
 }
 
 /* Inventory variant (deck box): bordered card, image + name + rarity */
@@ -378,25 +347,5 @@ function handleClick(): void {
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
-}
-
-.dt-yugioh-card--inventory .dt-yugioh-card__rarity--below[data-variant='ultra-rare'] {
-  color: var(--dt-color-millennium-gold);
-  border-color: rgba(255, 215, 0, 0.4);
-}
-
-.dt-yugioh-card--inventory .dt-yugioh-card__rarity--below[data-variant='secret-rare'] {
-  color: #a78bfa;
-  border-color: rgba(167, 139, 250, 0.4);
-}
-
-.dt-yugioh-card--inventory .dt-yugioh-card__rarity--below[data-variant='super-rare'] {
-  color: var(--dt-color-cyber-blue);
-  border-color: rgba(0, 242, 255, 0.4);
-}
-
-.dt-yugioh-card--inventory .dt-yugioh-card__rarity--below[data-variant='common'] {
-  color: var(--dt-text-muted);
-  border-color: rgba(156, 163, 175, 0.3);
 }
 </style>

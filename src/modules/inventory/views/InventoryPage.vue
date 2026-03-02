@@ -3,7 +3,7 @@
     <!-- Header: My Deck Box + user info + XP -->
     <header class="inventory-header">
       <div class="inventory-header__top">
-        <h1 class="dt-heading-orbitron inventory-header__title">My Deck Box</h1>
+        <h1 class="dt-heading-orbitron inventory-header__title dt-glow-text-cyan">My Deck Box</h1>
       </div>
       <div class="inventory-header__meta row items-center q-gutter-sm">
         <span class="inventory-header__meta-dot" aria-hidden="true" />
@@ -12,12 +12,14 @@
         </span>
       </div>
       <div class="inventory-header__xp">
-        <span class="inventory-header__xp-label">XP PROGRESS</span>
+        <div class="flex items-center justify-between">
+          <span class="inventory-header__xp-label">XP PROGRESS</span>
+          <span class="inventory-header__xp-text">
+            {{ xpCurrent.toLocaleString() }} / {{ xpMax.toLocaleString() }}
+          </span>
+        </div>
         <div class="inventory-header__xp-bar-wrap">
-          <q-linear-progress :value="xpProgress" class="inventory-header__xp-bar" size="10px" />
-          <span class="inventory-header__xp-text"
-            >{{ xpCurrent.toLocaleString() }} / {{ xpMax.toLocaleString() }}</span
-          >
+          <q-linear-progress :value="xpProgress" class="inventory-header__xp-bar" size="5px" />
         </div>
       </div>
     </header>
@@ -38,14 +40,6 @@
             <q-icon name="search" size="20px" />
           </template>
         </q-input>
-        <q-btn
-          flat
-          round
-          dense
-          class="inventory-controls__filter"
-          icon="filter_list"
-          aria-label="Filter"
-        />
       </div>
       <q-btn
         class="inventory-controls__quick-add"
@@ -59,7 +53,7 @@
 
     <!-- Card grid + Add Card slot -->
     <section class="inventory-section">
-      <q-inner-loading :showing="inventoryStore.isLoading">
+      <q-inner-loading :showing="inventoryStore.isLoading" dark>
         <q-spinner-gears color="primary" size="64px" />
       </q-inner-loading>
 
@@ -97,6 +91,7 @@
           @click="() => {}"
         />
         <button
+          v-if="filteredInventory.length"
           type="button"
           class="inventory-add-slot"
           aria-label="Add card"
@@ -109,7 +104,7 @@
     </section>
 
     <!-- Quick Add dialog -->
-    <q-dialog v-model="quickAddOpen" persistent maximized>
+    <q-dialog v-model="quickAddOpen" :full-width="!catalogLoading">
       <q-card class="dt-glass-surface dt-holo-border inventory-dialog">
         <q-bar class="q-pb-none">
           <div class="dt-heading-orbitron text-caption dt-glow-text-cyan">Quick Add</div>
@@ -133,6 +128,7 @@
               </template>
             </q-input>
             <q-btn
+              class="inventory-add-selected-btn"
               color="secondary"
               text-color="dark"
               no-caps
@@ -148,8 +144,8 @@
         <q-separator dark />
 
         <q-card-section class="q-pt-md scroll">
-          <q-inner-loading :showing="catalogLoading">
-            <q-spinner-gears color="primary" size="64px" />
+          <q-inner-loading :showing="catalogLoading" dark>
+            <q-spinner-gears color="primary" size="50px" />
           </q-inner-loading>
 
           <div v-if="!catalogLoading" class="inventory-grid">
@@ -169,6 +165,7 @@
 
           <div v-if="catalogMore && !catalogLoading" class="row justify-center q-mt-md">
             <q-btn
+              class="load-more-btn"
               flat
               color="primary"
               no-caps
@@ -324,11 +321,12 @@ async function handleAddSelected(): Promise<void> {
 }
 
 .inventory-header__title {
-  font-size: 1.75rem;
+  font-size: 2.15rem;
   font-weight: 700;
   color: var(--dt-text-primary);
   margin: 0 0 8px;
   letter-spacing: 0.1em;
+  line-height: 3rem;
 }
 
 .inventory-header__meta {
@@ -350,16 +348,16 @@ async function handleAddSelected(): Promise<void> {
 }
 
 .inventory-header__xp {
-  max-width: 400px;
+  max-width: 310px;
 }
 
 .inventory-header__xp-label {
   display: block;
   font-family: 'Orbitron', system-ui, sans-serif;
-  font-size: 0.7rem;
-  font-weight: 600;
+  font-size: 0.5rem;
+  font-weight: 200;
   letter-spacing: 0.1em;
-  color: var(--dt-text-primary);
+  color: var(--dt-text-muted);
   margin-bottom: 6px;
 }
 
@@ -385,8 +383,8 @@ async function handleAddSelected(): Promise<void> {
 }
 
 .inventory-header__xp-text {
-  font-size: 0.85rem;
-  color: var(--dt-text-muted);
+  font-size: 0.7rem;
+  color: var(--dt-color-cyber-blue);
   white-space: nowrap;
 }
 
@@ -403,14 +401,11 @@ async function handleAddSelected(): Promise<void> {
   border: 1px solid var(--dt-color-border-glass);
 }
 
+.inventory-controls__search :deep(.q-field__prepend),
+.inventory-controls__search :deep(.q-field__native),
 .inventory-controls__search :deep(.q-field__control) {
-  color: var(--dt-text-primary);
-}
-
-.inventory-controls__filter {
-  color: var(--dt-text-primary);
-  background: var(--dt-color-surface-soft);
-  border: 1px solid var(--dt-color-border-glass);
+  color: var(--dt-color-cyber-blue);
+  border-radius: 8px;
 }
 
 .inventory-controls__quick-add {
@@ -436,11 +431,18 @@ async function handleAddSelected(): Promise<void> {
   padding: 48px 24px;
 }
 
+.inventory-add-selected-btn,
 .inventory-empty__cta {
   margin-top: 8px;
   background: var(--dt-color-millennium-gold);
   color: var(--dt-color-deep-navy);
   font-weight: 600;
+  border-radius: 8px;
+}
+
+.inventory-add-selected-btn:hover,
+.inventory-empty__cta:hover {
+  box-shadow: 0 0 16px rgba(255, 215, 0, 0.4);
 }
 
 .inventory-grid {

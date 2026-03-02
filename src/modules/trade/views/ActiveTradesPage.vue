@@ -1,13 +1,13 @@
 <template>
   <q-page class="active-trades-page">
-    <header class="active-trades-page__header">
-      <h1 class="dt-heading-orbitron active-trades-page__title">Active Trades</h1>
+    <header class="active-trades-page__header text-center">
+      <h1 class="dt-heading-orbitron active-trades-page__title dt-glow-text-cyan">Active Trades</h1>
       <p class="active-trades-page__subtitle dt-text-muted">
         Manage your published trade offers and incoming requests.
       </p>
     </header>
 
-    <q-inner-loading :showing="activeTradesStore.isLoading">
+    <q-inner-loading :showing="activeTradesStore.isLoading" dark>
       <q-spinner-gears color="primary" size="64px" />
     </q-inner-loading>
 
@@ -47,7 +47,6 @@
               :image-url="firstOffering(trade)!.imageUrl"
               rarity-label="ULTRA RARE"
               rarity-variant="ultra-rare"
-              :interactive="false"
             />
             <div v-else class="active-trade-card__empty">—</div>
           </div>
@@ -64,7 +63,6 @@
               :image-url="firstRequesting(trade)!.imageUrl"
               rarity-label="SECRET RARE"
               rarity-variant="secret-rare"
-              :interactive="false"
             />
             <div v-else class="active-trade-card__empty">—</div>
           </div>
@@ -98,7 +96,12 @@
       </article>
     </div>
 
-    <q-banner v-if="activeTradesStore.errorMessage" rounded dense class="bg-negative text-white q-mt-md">
+    <q-banner
+      v-if="activeTradesStore.errorMessage"
+      rounded
+      dense
+      class="bg-negative text-white q-mt-md"
+    >
       {{ activeTradesStore.errorMessage }}
     </q-banner>
 
@@ -123,8 +126,8 @@
 
         <q-card-section class="revoke-modal__body">
           <p class="revoke-modal__message">
-            Are you sure you want to cancel this trade offer? Your tribute card will
-            be returned to your inventory.
+            Are you sure you want to cancel this trade offer? Your tribute card will be returned to
+            your inventory.
           </p>
         </q-card-section>
 
@@ -166,15 +169,11 @@ const revokeModalOpen = ref(false);
 const tradeToRevokeId = ref<string | null>(null);
 
 function firstOffering(trade: TradeListItem): Card | undefined {
-  return trade.tradeCards
-    .filter((tc) => tc.type === 'OFFERING')
-    .map((tc) => tc.card)[0];
+  return trade.tradeCards.filter((tc) => tc.type === 'OFFERING').map((tc) => tc.card)[0];
 }
 
 function firstRequesting(trade: TradeListItem): Card | undefined {
-  return trade.tradeCards
-    .filter((tc) => tc.type === 'RECEIVING')
-    .map((tc) => tc.card)[0];
+  return trade.tradeCards.filter((tc) => tc.type === 'RECEIVING').map((tc) => tc.card)[0];
 }
 
 function openRevokeModal(tradeId: string): void {
@@ -241,6 +240,11 @@ onMounted(async () => {
   background: var(--dt-color-millennium-gold);
   color: var(--dt-color-deep-navy);
   font-weight: 600;
+  border-radius: 8px;
+}
+
+.active-trades-empty__cta:hover {
+  box-shadow: 0 0 12px rgba(255, 215, 0, 0.2);
 }
 
 .active-trades-list {
@@ -262,27 +266,10 @@ onMounted(async () => {
   flex-wrap: wrap;
 }
 
-@media (max-width: 600px) {
-  .active-trade-card__content {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .active-trade-card__for {
-    text-align: center;
-  }
-
-  .active-trade-card__meta {
-    margin-left: 0;
-    margin-top: 8px;
-    padding-top: 16px;
-    border-top: 1px solid var(--dt-color-border-glass);
-  }
-}
-
 .active-trade-card__slot {
-  flex: 0 0 140px;
-  min-width: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, max(160px));
+  gap: 20px;
 }
 
 .active-trade-card__empty {
@@ -311,6 +298,36 @@ onMounted(async () => {
   flex-direction: column;
   gap: 12px;
   min-width: 160px;
+}
+
+@media (max-width: 600px) {
+  .active-trade-card__for {
+    text-align: center;
+  }
+}
+
+@media (max-width: 735px) {
+  .active-trade-card__meta {
+    margin-left: 0;
+    margin-top: 8px;
+    padding-top: 16px;
+    border-top: 1px solid var(--dt-color-border-glass);
+    flex-direction: row;
+    width: 100%;
+    justify-content: center;
+  }
+
+  .active-trade-card__content {
+    justify-content: center;
+  }
+}
+
+@media (max-width: 512px) {
+  .active-trade-card__content {
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
 }
 
 .active-trade-card__status {
@@ -384,13 +401,12 @@ onMounted(async () => {
   max-width: 90vw;
   border-radius: 16px;
   border: 1px solid rgba(220, 38, 38, 0.2);
-  background:
-    linear-gradient(
-      145deg,
-      rgba(29, 17, 53, 0.98),
-      rgba(55, 20, 60, 0.95),
-      rgba(30, 15, 45, 0.98)
-    );
+  background: linear-gradient(
+    145deg,
+    rgba(29, 17, 53, 0.98),
+    rgba(55, 20, 60, 0.95),
+    rgba(30, 15, 45, 0.98)
+  );
   box-shadow:
     0 0 0 1px rgba(220, 38, 38, 0.15),
     0 24px 48px rgba(0, 0, 0, 0.9);

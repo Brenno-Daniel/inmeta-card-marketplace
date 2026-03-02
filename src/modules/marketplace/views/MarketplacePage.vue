@@ -41,13 +41,14 @@
           option-label="label"
           emit-value
           map-options
+          dark
           class="marketplace-section__sort"
           behavior="menu"
           :display-value="sortByDisplayValue"
         />
       </div>
 
-      <q-inner-loading :showing="marketplaceStore.isLoading">
+      <q-inner-loading :showing="marketplaceStore.isLoading" dark>
         <q-spinner-gears color="secondary" size="64px" />
       </q-inner-loading>
 
@@ -101,7 +102,6 @@
                   :image-url="firstOffering(trade)!.imageUrl"
                   rarity-label="ULTRA RARE"
                   rarity-variant="ultra-rare"
-                  :interactive="false"
                 />
                 <div v-else class="trade-card__empty-slot">—</div>
               </div>
@@ -121,7 +121,6 @@
                   :image-url="firstRequesting(trade)!.imageUrl"
                   rarity-label="SECRET RARE"
                   rarity-variant="secret-rare"
-                  :interactive="false"
                 />
                 <div v-else class="trade-card__empty-slot">—</div>
               </div>
@@ -144,6 +143,7 @@
 
       <div v-if="marketplaceStore.more && sortedTrades.length" class="row justify-center q-mt-lg">
         <q-btn
+          class="load-more-btn"
           flat
           color="primary"
           no-caps
@@ -262,7 +262,7 @@ function extractCardsByType(tradeId: string, type: TradeCard['type']): Card[] {
 }
 
 .hero-section__title {
-  font-size: clamp(1.5rem, 4vw, 2.25rem);
+  font-size: clamp(3.5rem, 4vw, 2.25rem);
   line-height: 1.2;
   letter-spacing: 0.14em;
   margin: 0;
@@ -301,6 +301,25 @@ function extractCardsByType(tradeId: string, type: TradeCard['type']): Card[] {
   color: var(--dt-text-primary);
 }
 
+@media (max-width: 400px) {
+  .hero-section__title {
+    font-size: clamp(2.5rem, 4vw, 1.5rem);
+  }
+
+  .hero-section__subtitle {
+    font-size: 0.9rem;
+  }
+
+  .hero-section__chip-text {
+    font-size: 0.65rem;
+  }
+
+  .hero-section__chip-dot {
+    width: 6px;
+    height: 6px;
+  }
+}
+
 /* Live Marketplace section */
 .marketplace-section {
   padding: 24px 20px 40px;
@@ -328,6 +347,13 @@ function extractCardsByType(tradeId: string, type: TradeCard['type']): Card[] {
   margin: 0;
 }
 
+@media (max-width: 400px) {
+  .marketplace-section__title {
+    font-size: 1rem;
+    letter-spacing: 0.01em;
+  }
+}
+
 .marketplace-section__title-suffix {
   color: var(--dt-text-primary);
 }
@@ -339,8 +365,11 @@ function extractCardsByType(tradeId: string, type: TradeCard['type']): Card[] {
   border: 1px solid var(--dt-color-border-glass);
 }
 
-.marketplace-section__sort :deep(.q-field__control) {
-  color: var(--dt-text-primary);
+.marketplace-section__sort :deep(.q-field__control),
+.marketplace-section__sort :deep(.q-field__native),
+.marketplace-section__sort :deep(.q-field__append) {
+  color: var(--dt-color-cyber-blue);
+  border-radius: 8px;
 }
 
 /* Trade card */

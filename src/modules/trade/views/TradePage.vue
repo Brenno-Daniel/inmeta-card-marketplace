@@ -13,11 +13,13 @@
         <!-- Left: Your Tribute -->
         <div class="trade-wizard__column">
           <div class="trade-wizard__column-header">
-            <span class="trade-wizard__step-badge">1</span>
-            <span class="dt-heading-orbitron trade-wizard__column-title">Your Tribute</span>
+            <span class="trade-wizard__step-badge" data-variant="your-tribute">1</span>
+            <span class="dt-heading-orbitron trade-wizard__column-title" data-variant="your-tribute"
+              >Your Tribute</span
+            >
           </div>
 
-          <q-inner-loading :showing="tradeStore.isLoadingMyCards">
+          <q-inner-loading :showing="tradeStore.isLoadingMyCards" dark>
             <q-spinner-gears color="primary" size="48px" />
           </q-inner-loading>
 
@@ -64,8 +66,10 @@
         <!-- Right: Desired Card -->
         <div class="trade-wizard__column">
           <div class="trade-wizard__column-header">
-            <span class="trade-wizard__step-badge">2</span>
-            <span class="dt-heading-orbitron trade-wizard__column-title">Desired Card</span>
+            <span class="trade-wizard__step-badge" data-variant="desired-card">2</span>
+            <span class="dt-heading-orbitron trade-wizard__column-title" data-variant="desired-card"
+              >Desired Card</span
+            >
           </div>
 
           <q-input
@@ -82,7 +86,7 @@
             </template>
           </q-input>
 
-          <q-inner-loading :showing="tradeStore.isLoadingCatalog">
+          <q-inner-loading :showing="tradeStore.isLoadingCatalog" dark>
             <q-spinner-gears color="primary" size="48px" />
           </q-inner-loading>
 
@@ -106,6 +110,7 @@
             class="row justify-center q-mt-md"
           >
             <q-btn
+              class="load-more-btn"
               flat
               color="primary"
               no-caps
@@ -300,11 +305,19 @@ async function handleSubmit(): Promise<void> {
   height: 28px;
   border-radius: 50%;
   background: rgba(255, 215, 0, 0.15);
-  border: 1px solid var(--dt-color-millennium-gold);
-  color: var(--dt-color-millennium-gold);
   font-family: 'Orbitron', system-ui, sans-serif;
   font-size: 0.85rem;
   font-weight: 700;
+}
+
+.trade-wizard__step-badge[data-variant='your-tribute'] {
+  border: 1px solid var(--dt-color-cyber-blue);
+  color: var(--dt-color-cyber-blue);
+}
+
+.trade-wizard__step-badge[data-variant='desired-card'] {
+  border: 1px solid var(--dt-color-millennium-gold);
+  color: var(--dt-color-millennium-gold);
 }
 
 .trade-wizard__column-title {
@@ -314,14 +327,25 @@ async function handleSubmit(): Promise<void> {
   letter-spacing: 0.08em;
 }
 
+.trade-wizard__column-title[data-variant='your-tribute'] {
+  color: var(--dt-color-cyber-blue);
+}
+
+.trade-wizard__column-title[data-variant='desired-card'] {
+  color: var(--dt-color-millennium-gold);
+}
+
 .trade-wizard__search {
   border-radius: 8px;
   background: var(--dt-color-surface-soft);
   border: 1px solid var(--dt-color-border-glass);
 }
 
+.trade-wizard__search :deep(.q-field__prepend),
+.trade-wizard__search :deep(.q-field__native),
 .trade-wizard__search :deep(.q-field__control) {
-  color: var(--dt-text-primary);
+  color: var(--dt-color-millennium-gold);
+  border-radius: 8px;
 }
 
 .trade-wizard__grid {
@@ -411,5 +435,9 @@ async function handleSubmit(): Promise<void> {
 .trade-page__cta.q-btn:disabled {
   background: var(--dt-color-surface-soft);
   color: var(--dt-text-muted);
+}
+
+.trade-page__cta.q-btn:hover {
+  box-shadow: 0 0 12px rgba(0, 242, 214, 0.2);
 }
 </style>

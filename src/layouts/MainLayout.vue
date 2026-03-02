@@ -5,12 +5,30 @@
         <!-- Left: Logo + Brand -->
         <router-link to="/" class="dt-header__brand row items-center no-wrap">
           <div class="dt-header__logo" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" xmlns="http://www.w3.org/2000/svg">
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.25"
+              xmlns="http://www.w3.org/2000/svg"
+            >
               <path d="M12 2L21 8v8L12 22L3 16V8L12 2Z" />
             </svg>
           </div>
           <span class="dt-header__title dt-heading-orbitron">DuelTrade</span>
         </router-link>
+
+        <!-- Mobile: Hamburger with nav inside drawer -->
+        <q-btn
+          v-if="authStore.isAuthenticated && $q.screen.lt.md"
+          flat
+          dense
+          round
+          icon="menu"
+          aria-label="Menu"
+          class="q-ml-sm dt-text-millennium-gold dt-glow-text-gold"
+          @click="drawerOpen = true"
+        />
 
         <q-space />
 
@@ -25,8 +43,18 @@
             active-class="dt-header__nav-link--active"
           >
             <!-- Marketplace: hexagon outline icon -->
-            <span v-if="item.icon === 'hexagon'" class="dt-header__nav-icon-hexagon" aria-hidden="true">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" xmlns="http://www.w3.org/2000/svg">
+            <span
+              v-if="item.icon === 'hexagon'"
+              class="dt-header__nav-icon-hexagon"
+              aria-hidden="true"
+            >
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.5"
+                xmlns="http://www.w3.org/2000/svg"
+              >
                 <path d="M12 2L21 8v8L12 22L3 16V8L12 2Z" />
               </svg>
             </span>
@@ -40,58 +68,43 @@
         <!-- Right: Guest CTA or Profile -->
         <div class="dt-header__actions">
           <template v-if="!authStore.isAuthenticated">
-            <q-btn
-              to="/auth"
-              class="dt-header__cta"
-              no-caps
-              flat
-              unelevated
-            >
-              <span class="row items-center no-wrap q-gutter-xs">
+            <q-btn to="/auth" class="dt-header__cta" no-caps flat unelevated>
+              <span v-if="$q.screen.gt.xs" class="row items-center no-wrap q-gutter-xs truncate">
                 <span>Join Duelist Hub</span>
-                <q-icon name="arrow_forward" size="18px" />
+                <q-icon name="login" size="18px" />
               </span>
+              <q-icon v-else name="login" size="16px" />
             </q-btn>
           </template>
           <template v-else>
-            <!-- Mobile: Hamburger with nav inside drawer -->
-            <q-btn
-              v-if="$q.screen.lt.md"
-              flat
-              dense
-              round
-              icon="menu"
-              aria-label="Menu"
-              @click="drawerOpen = true"
-            />
             <!-- Profile button + dropdown (hidden on mobile; drawer has logout) -->
-            <q-btn
-              v-if="$q.screen.gt.md"
-              flat
-              no-caps
-              class="dt-header__profile-btn"
-              :label="displayName"
-              @click="profileMenuOpen = true"
-            >
-              <q-avatar size="28px" class="q-mr-sm" color="primary" text-color="dark">
-                {{ avatarLetter }}
+            <q-chip v-if="$q.screen.gt.xs" color="primary" @click="profileMenuOpen = false">
+              <q-avatar>
+                <img src="https://cdn.quasar.dev/img/boy-avatar.png" />
               </q-avatar>
-              <q-icon name="expand_more" size="xs" />
+              {{ displayName }}
+            </q-chip>
+            <q-btn v-else round color="primary">
+              <q-avatar size="42px">
+                <img src="https://cdn.quasar.dev/img/boy-avatar.png" />
+              </q-avatar>
             </q-btn>
+
             <q-menu
               v-model="profileMenuOpen"
               class="dt-header__dropdown"
-              anchor="bottom right"
-              self="top right"
+              anchor="bottom left"
+              self="top left"
+              transition-show="jump-down"
+              transition-hide="jump-up"
             >
               <q-list class="dt-header__dropdown-list">
                 <q-item disable>
                   <q-item-section avatar>
-                    <q-icon name="sync" />
+                    <q-icon name="settings" />
                   </q-item-section>
                   <q-item-section>
                     <q-item-label>Update Data</q-item-label>
-                    <q-item-label caption>Coming soon</q-item-label>
                   </q-item-section>
                 </q-item>
                 <q-separator />
@@ -113,9 +126,10 @@
     <!-- Mobile drawer: nav links when authenticated -->
     <q-drawer
       v-model="drawerOpen"
-      side="right"
+      side="left"
       overlay
       bordered
+      dark
       class="dt-header__drawer"
       :width="280"
     >
@@ -184,11 +198,6 @@ const displayName = computed(() => {
   return `${name.slice(0, max)}…`;
 });
 
-const avatarLetter = computed(() => {
-  const name = authStore.user?.name ?? '?';
-  return name.charAt(0).toUpperCase();
-});
-
 async function handleLogout(): Promise<void> {
   authStore.logout();
   profileMenuOpen.value = false;
@@ -221,8 +230,8 @@ onMounted(async () => {
 }
 
 .dt-header__logo {
-  width: 36px;
-  height: 36px;
+  width: 26px;
+  height: 26px;
   color: var(--dt-color-millennium-gold);
   filter: drop-shadow(0 0 8px rgba(255, 215, 0, 0.4));
   flex-shrink: 0;
@@ -239,6 +248,22 @@ onMounted(async () => {
   letter-spacing: 0.12em;
   color: var(--dt-text-primary);
   text-shadow: 0 0 20px rgba(249, 250, 251, 0.15);
+}
+
+@media (max-width: 300px) {
+  .dt-header__brand {
+    gap: 5px;
+  }
+
+  .dt-header__logo {
+    width: 20px;
+    height: 20px;
+  }
+
+  .dt-header__title {
+    font-size: 1rem;
+    letter-spacing: 0.008em;
+  }
 }
 
 .dt-header__nav {
@@ -258,7 +283,9 @@ onMounted(async () => {
   font-size: 0.95rem;
   font-family: 'Rajdhani', system-ui, sans-serif;
   font-weight: 500;
-  transition: color 0.2s, background 0.2s;
+  transition:
+    color 0.2s,
+    background 0.2s;
 
   &:hover {
     color: var(--dt-text-primary);
@@ -291,7 +318,7 @@ onMounted(async () => {
   border-radius: 8px;
   font-weight: 600;
   letter-spacing: 0.04em;
-  padding: 8px 16px;
+  padding: 3px 6px;
   box-shadow: 0 0 12px rgba(0, 242, 255, 0.25);
 
   &:hover {
@@ -304,15 +331,15 @@ onMounted(async () => {
   color: var(--dt-text-primary);
 }
 
-.dt-header__dropdown {
+.dt-header__dropdown .dt-header__dropdown-list {
   background: var(--dt-color-surface-elevated);
   border: 1px solid var(--dt-color-border-glass);
   border-radius: 8px;
 }
 
-.dt-header__dropdown-list {
-  min-width: 200px;
-  padding: 4px;
+.dt-header__dropdown .dt-header__dropdown-list .q-item__section--avatar,
+.dt-header__drawer .q-item__section--avatar {
+  min-width: 0;
 }
 
 .dt-header__drawer {
