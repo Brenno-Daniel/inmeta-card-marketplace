@@ -48,7 +48,7 @@
               :image-url="card.imageUrl"
               :rarity-label="getRarityLabel(card)"
               :rarity-variant="getRarityVariant(card)"
-              :selected="tradeStore.selectedOfferingId === card.id"
+              :selected="tradeStore.selectedOfferingIds.includes(card.id)"
               :interactive="true"
               @click="selectOffering(card.id)"
             />
@@ -99,7 +99,7 @@
               :image-url="card.imageUrl"
               :rarity-label="getRarityLabel(card)"
               :rarity-variant="getRarityVariant(card)"
-              :selected="tradeStore.selectedReceivingId === card.id"
+              :selected="tradeStore.selectedReceivingIds.includes(card.id)"
               :interactive="true"
               @click="selectReceiving(card.id)"
             />
@@ -204,11 +204,11 @@ onMounted(async () => {
 });
 
 function selectOffering(cardId: string): void {
-  tradeStore.setSelectedOffering(tradeStore.selectedOfferingId === cardId ? null : cardId);
+  tradeStore.setSelectedOffering(cardId);
 }
 
 function selectReceiving(cardId: string): void {
-  tradeStore.setSelectedReceiving(tradeStore.selectedReceivingId === cardId ? null : cardId);
+  tradeStore.setSelectedReceiving(cardId);
 }
 
 async function loadMore(): Promise<void> {

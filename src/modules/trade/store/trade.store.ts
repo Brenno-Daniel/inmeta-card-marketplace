@@ -12,12 +12,16 @@ interface TradeState {
   catalogCards: Card[];
   catalogPage: number;
   catalogMore: boolean;
-  selectedOfferingId: string | null;
-  selectedReceivingId: string | null;
+  selectedOfferingIds: string[];
+  selectedReceivingIds: string[];
   isLoadingMyCards: boolean;
   isLoadingCatalog: boolean;
   isSubmitting: boolean;
   errorMessage: string | null;
+}
+
+function toggleId(list: string[], cardId: string): string[] {
+  return list.includes(cardId) ? list.filter((id) => id !== cardId) : [...list, cardId];
 }
 
 export const useTradeStore = defineStore('trade', {
@@ -26,8 +30,8 @@ export const useTradeStore = defineStore('trade', {
     catalogCards: [],
     catalogPage: 1,
     catalogMore: true,
-    selectedOfferingId: null,
-    selectedReceivingId: null,
+    selectedOfferingIds: [],
+    selectedReceivingIds: [],
     isLoadingMyCards: false,
     isLoadingCatalog: false,
     isSubmitting: false,
@@ -35,12 +39,12 @@ export const useTradeStore = defineStore('trade', {
   }),
 
   getters: {
-    selectedOffering: (state): Card | null =>
-      state.myCards.find((c) => c.id === state.selectedOfferingId) ?? null,
-    selectedReceiving: (state): Card | null =>
-      state.catalogCards.find((c) => c.id === state.selectedReceivingId) ?? null,
+    selectedOfferings: (state): Card[] =>
+      state.myCards.filter((c) => state.selectedOfferingIds.includes(c.id)),
+    selectedReceivings: (state): Card[] =>
+      state.catalogCards.filter((c) => state.selectedReceivingIds.includes(c.id)),
     canSubmit: (state): boolean =>
-      Boolean(state.selectedOfferingId && state.selectedReceivingId),
+      state.selectedOfferingIds.length > 0 && state.selectedReceivingIds.length > 0,
   },
 
   actions: {
@@ -87,29 +91,29 @@ export const useTradeStore = defineStore('trade', {
       await this.loadCatalog(false);
     },
 
-    setSelectedOffering(cardId: string | null): void {
-      this.selectedOfferingId = cardId;
+    setSelectedOffering(cardId: string): void {
+      this.selectedOfferingIds = toggleId(this.selectedOfferingIds, cardId);
     },
 
-    setSelectedReceiving(cardId: string | null): void {
-      this.selectedReceivingId = cardId;
+    setSelectedReceiving(cardId: string): void {
+      this.selectedReceivingIds = toggleId(this.selectedReceivingIds, cardId);
     },
 
     resetSelection(): void {
-      this.selectedOfferingId = null;
-      this.selectedReceivingId = null;
+      this.selectedOfferingIds = [];
+      this.selectedReceivingIds = [];
       this.errorMessage = null;
     },
 
     async submitTrade(): Promise<string | null> {
-      if (!this.selectedOfferingId || !this.selectedReceivingId) return null;
+      if (!this.canSubmit) return null;
       this.isSubmitting = true;
       this.errorMessage = null;
       try {
         const response = await createTrade({
           cards: [
-            { cardId: this.selectedOfferingId, type: 'OFFERING' },
-            { cardId: this.selectedReceivingId, type: 'RECEIVING' },
+            ...this.selectedOfferingIds.map((cardId) => ({ cardId, type: 'OFFERING' as const })),
+            ...this.selectedReceivingIds.map((cardId) => ({ cardId, type: 'RECEIVING' as const })),
           ],
         });
         this.resetSelection();
