@@ -131,7 +131,7 @@
           <footer class="trade-card__footer row items-center justify-between q-gutter-sm">
             <q-btn
               v-if="trade.tradeCards.length > 1"
-              class="trade-card__linked-btn"
+              class="trade-card__linked-btn dt-text-millennium-gold dt-glow-text-gold"
               no-caps
               flat
               dense
@@ -145,8 +145,8 @@
               no-caps
               flat
               unelevated
-              label="Initiate Trade"
-              to="/trade"
+              label="Show Interest"
+              @click="handleInitiateTrade(trade)"
             />
           </footer>
         </article>
@@ -263,20 +263,57 @@
         </q-card-section>
       </q-card>
     </q-dialog>
+
+    <!-- Trade interest modal -->
+    <q-dialog v-model="interestModalOpen">
+      <q-card class="interest-modal dt-glass-surface">
+        <q-card-section class="row items-center justify-between">
+          <span class="dt-heading-orbitron interest-modal__title">Trade Interest Sent</span>
+          <q-btn flat round dense icon="close" aria-label="Close" @click="closeInterestModal" />
+        </q-card-section>
+        <q-card-section>
+          <p class="interest-modal__message">
+            Interest request sent to
+            <strong>{{ interestTargetName }}</strong
+            >.
+          </p>
+          <p class="interest-modal__hint dt-text-muted">
+            You can also create your own trade offer right now.
+          </p>
+        </q-card-section>
+        <q-card-actions align="right" class="q-pt-none q-pb-md q-pr-lg">
+          <q-btn flat no-caps label="Close" @click="closeInterestModal" />
+          <q-btn
+            unelevated
+            no-caps
+            color="primary"
+            text-color="dark"
+            label="Go to Trade Portal"
+            @click="goToTradePortal"
+          />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
   </q-page>
 </template>
 
 <script setup lang="ts">
 import { computed, nextTick, onMounted, ref } from 'vue';
+import { useRouter } from 'vue-router';
 import YugiohCard from 'src/shared/components/YugiohCard.vue';
 import type { Card, TradeCard, TradeListItem } from 'src/core/types/api';
+import { useAuthStore } from 'src/modules/auth/store/auth.store';
 import { useMarketplaceStore } from '../store/marketplace.store';
 
+const router = useRouter();
+const authStore = useAuthStore();
 const marketplaceStore = useMarketplaceStore();
 const linkedModalOpen = ref(false);
 const modalTradeId = ref<string | null>(null);
 const offeringSlide = ref<string | null>(null);
 const requestingSlide = ref<string | null>(null);
+const interestModalOpen = ref(false);
+const interestTargetName = ref<string>('');
 
 type SortOptionValue = 'newest' | 'oldest';
 
@@ -346,6 +383,25 @@ function closeLinkedCardsModal(): void {
   modalTradeId.value = null;
   offeringSlide.value = null;
   requestingSlide.value = null;
+}
+
+async function handleInitiateTrade(trade: TradeListItem): Promise<void> {
+  if (!authStore.isAuthenticated) {
+    await router.replace('/auth');
+    return;
+  }
+
+  interestTargetName.value = trade.user.name;
+  interestModalOpen.value = true;
+}
+
+function closeInterestModal(): void {
+  interestModalOpen.value = false;
+}
+
+async function goToTradePortal(): Promise<void> {
+  interestModalOpen.value = false;
+  await router.push('/trade');
 }
 
 function formatRelativeTime(isoDate: string): string {
@@ -661,5 +717,21 @@ function extractCardsByType(tradeId: string, type: TradeCard['type']): Card[] {
 
 .linked-cards-modal__card :deep(.dt-yugioh-card--compact) {
   width: 100%;
+}
+
+.interest-modal {
+  max-width: 480px;
+}
+
+.interest-modal__title {
+  font-size: 1.05rem;
+}
+
+.interest-modal__message {
+  margin-bottom: 8px;
+}
+
+.interest-modal__hint {
+  font-size: 0.85rem;
 }
 </style>
