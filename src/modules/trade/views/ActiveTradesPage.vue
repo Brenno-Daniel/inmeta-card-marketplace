@@ -42,15 +42,16 @@
           <div class="active-trade-card__slot">
             <q-carousel
               v-if="offeringCards(trade).length"
-              v-model="offeringSlide"
+              :model-value="getOfferingSlide(trade.id, offeringCards(trade))"
               swipeable
               animated
               infinite
               autoplay
-              height="220px"
+              height="auto"
               control-color="primary"
               arrows
               class="dt-glass-surface"
+              @update:model-value="(val) => setOfferingSlide(trade.id, String(val))"
             >
               <q-carousel-slide
                 v-for="card in offeringCards(trade)"
@@ -58,13 +59,15 @@
                 :name="card.id"
                 class="column items-center justify-center"
               >
-                <YugiohCard
-                  variant="compact"
-                  :title="card.name"
-                  :image-url="card.imageUrl"
-                  rarity-label="ULTRA RARE"
-                  rarity-variant="ultra-rare"
-                />
+                <div class="carousel-slide__card-slot">
+                  <YugiohCard
+                    variant="compact"
+                    :title="card.name"
+                    :image-url="card.imageUrl"
+                    rarity-label="ULTRA RARE"
+                    rarity-variant="ultra-rare"
+                  />
+                </div>
               </q-carousel-slide>
             </q-carousel>
             <div v-else class="active-trade-card__empty">—</div>
@@ -77,15 +80,16 @@
           <div class="active-trade-card__slot">
             <q-carousel
               v-if="requestingCards(trade).length"
-              v-model="requestingSlide"
+              :model-value="getRequestingSlide(trade.id, requestingCards(trade))"
               swipeable
               animated
               infinite
               autoplay
-              height="220px"
+              height="auto"
               control-color="secondary"
               arrows
               class="dt-glass-surface"
+              @update:model-value="(val) => setRequestingSlide(trade.id, String(val))"
             >
               <q-carousel-slide
                 v-for="card in requestingCards(trade)"
@@ -93,13 +97,15 @@
                 :name="card.id"
                 class="column items-center justify-center"
               >
-                <YugiohCard
-                  variant="compact"
-                  :title="card.name"
-                  :image-url="card.imageUrl"
-                  rarity-label="SECRET RARE"
-                  rarity-variant="secret-rare"
-                />
+                <div class="carousel-slide__card-slot">
+                  <YugiohCard
+                    variant="compact"
+                    :title="card.name"
+                    :image-url="card.imageUrl"
+                    rarity-label="SECRET RARE"
+                    rarity-variant="secret-rare"
+                  />
+                </div>
               </q-carousel-slide>
             </q-carousel>
             <div v-else class="active-trade-card__empty">—</div>
@@ -205,8 +211,9 @@ const activeTradesStore = useActiveTradesStore();
 
 const revokeModalOpen = ref(false);
 const tradeToRevokeId = ref<string | null>(null);
-const offeringSlide = ref<string | null>(null);
-const requestingSlide = ref<string | null>(null);
+
+const offeringSlides = ref<Record<string, string>>({});
+const requestingSlides = ref<Record<string, string>>({});
 
 function offeringCards(trade: TradeListItem): Card[] {
   return trade.tradeCards.filter((tc) => tc.type === 'OFFERING').map((tc) => tc.card);
@@ -214,6 +221,22 @@ function offeringCards(trade: TradeListItem): Card[] {
 
 function requestingCards(trade: TradeListItem): Card[] {
   return trade.tradeCards.filter((tc) => tc.type === 'RECEIVING').map((tc) => tc.card);
+}
+
+function getOfferingSlide(tradeId: string, cards: Card[]): string {
+  return offeringSlides.value[tradeId] ?? cards[0]?.id ?? '';
+}
+
+function setOfferingSlide(tradeId: string, slideId: string): void {
+  offeringSlides.value = { ...offeringSlides.value, [tradeId]: slideId };
+}
+
+function getRequestingSlide(tradeId: string, cards: Card[]): string {
+  return requestingSlides.value[tradeId] ?? cards[0]?.id ?? '';
+}
+
+function setRequestingSlide(tradeId: string, slideId: string): void {
+  requestingSlides.value = { ...requestingSlides.value, [tradeId]: slideId };
 }
 
 function openRevokeModal(tradeId: string): void {
@@ -310,6 +333,12 @@ onMounted(async () => {
   display: grid;
   grid-template-columns: repeat(auto-fill, max(160px));
   gap: 20px;
+}
+
+.carousel-slide__card-slot {
+  width: auto;
+  min-width: 130px;
+  max-width: 100%;
 }
 
 .active-trade-card__empty {
