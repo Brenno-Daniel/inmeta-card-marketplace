@@ -38,32 +38,70 @@
         class="active-trade-card dt-glass-surface dt-holo-border"
       >
         <div class="active-trade-card__content">
-          <!-- Offering card -->
+          <!-- Offering cards carousel -->
           <div class="active-trade-card__slot">
-            <YugiohCard
-              v-if="firstOffering(trade)"
-              variant="compact"
-              :title="firstOffering(trade)!.name"
-              :image-url="firstOffering(trade)!.imageUrl"
-              rarity-label="ULTRA RARE"
-              rarity-variant="ultra-rare"
-            />
+            <q-carousel
+              v-if="offeringCards(trade).length"
+              v-model="offeringSlide"
+              swipeable
+              animated
+              infinite
+              autoplay
+              height="220px"
+              control-color="primary"
+              arrows
+              class="dt-glass-surface"
+            >
+              <q-carousel-slide
+                v-for="card in offeringCards(trade)"
+                :key="card.id"
+                :name="card.id"
+                class="column items-center justify-center"
+              >
+                <YugiohCard
+                  variant="compact"
+                  :title="card.name"
+                  :image-url="card.imageUrl"
+                  rarity-label="ULTRA RARE"
+                  rarity-variant="ultra-rare"
+                />
+              </q-carousel-slide>
+            </q-carousel>
             <div v-else class="active-trade-card__empty">—</div>
           </div>
 
           <!-- FOR divider -->
           <div class="active-trade-card__for">FOR</div>
 
-          <!-- Requesting card -->
+          <!-- Requesting cards carousel -->
           <div class="active-trade-card__slot">
-            <YugiohCard
-              v-if="firstRequesting(trade)"
-              variant="compact"
-              :title="firstRequesting(trade)!.name"
-              :image-url="firstRequesting(trade)!.imageUrl"
-              rarity-label="SECRET RARE"
-              rarity-variant="secret-rare"
-            />
+            <q-carousel
+              v-if="requestingCards(trade).length"
+              v-model="requestingSlide"
+              swipeable
+              animated
+              infinite
+              autoplay
+              height="220px"
+              control-color="secondary"
+              arrows
+              class="dt-glass-surface"
+            >
+              <q-carousel-slide
+                v-for="card in requestingCards(trade)"
+                :key="card.id"
+                :name="card.id"
+                class="column items-center justify-center"
+              >
+                <YugiohCard
+                  variant="compact"
+                  :title="card.name"
+                  :image-url="card.imageUrl"
+                  rarity-label="SECRET RARE"
+                  rarity-variant="secret-rare"
+                />
+              </q-carousel-slide>
+            </q-carousel>
             <div v-else class="active-trade-card__empty">—</div>
           </div>
 
@@ -167,13 +205,15 @@ const activeTradesStore = useActiveTradesStore();
 
 const revokeModalOpen = ref(false);
 const tradeToRevokeId = ref<string | null>(null);
+const offeringSlide = ref<string | null>(null);
+const requestingSlide = ref<string | null>(null);
 
-function firstOffering(trade: TradeListItem): Card | undefined {
-  return trade.tradeCards.filter((tc) => tc.type === 'OFFERING').map((tc) => tc.card)[0];
+function offeringCards(trade: TradeListItem): Card[] {
+  return trade.tradeCards.filter((tc) => tc.type === 'OFFERING').map((tc) => tc.card);
 }
 
-function firstRequesting(trade: TradeListItem): Card | undefined {
-  return trade.tradeCards.filter((tc) => tc.type === 'RECEIVING').map((tc) => tc.card)[0];
+function requestingCards(trade: TradeListItem): Card[] {
+  return trade.tradeCards.filter((tc) => tc.type === 'RECEIVING').map((tc) => tc.card);
 }
 
 function openRevokeModal(tradeId: string): void {

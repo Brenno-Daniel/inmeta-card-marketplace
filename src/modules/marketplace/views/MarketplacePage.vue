@@ -127,8 +127,19 @@
             </div>
           </div>
 
-          <!-- Bottom: Initiate Trade -->
-          <footer class="trade-card__footer">
+          <!-- Bottom: linked cards + Initiate Trade -->
+          <footer class="trade-card__footer row items-center justify-between q-gutter-sm">
+            <q-btn
+              v-if="trade.tradeCards.length > 1"
+              class="trade-card__linked-btn"
+              no-caps
+              flat
+              dense
+              icon="collections"
+              label="See all linked cards"
+              @click="openLinkedCardsModal(trade.id)"
+            />
+            <div class="q-space" />
             <q-btn
               class="trade-card__cta"
               no-caps
@@ -153,6 +164,101 @@
         />
       </div>
     </section>
+
+    <!-- Linked cards modal -->
+    <q-dialog v-model="linkedModalOpen" full-width>
+      <q-inner-loading :showing="marketplaceStore.isLoading" dark>
+        <q-spinner-gears color="secondary" size="64px" />
+      </q-inner-loading>
+
+      <q-card class="linked-cards-modal dt-glass-surface">
+        <q-card-section class="row items-center justify-between q-gutter-sm">
+          <div class="column">
+            <span class="dt-heading-orbitron linked-cards-modal__title">Linked Cards</span>
+            <span v-if="modalTrade" class="linked-cards-modal__subtitle dt-text-muted">
+              {{ modalTrade.user.name }} · {{ modalOfferingCards.length }} offering /
+              {{ modalReceivingCards.length }} requesting
+            </span>
+          </div>
+          <q-btn
+            rounded
+            dense
+            flat
+            icon="close"
+            aria-label="Close"
+            @click="closeLinkedCardsModal"
+          />
+        </q-card-section>
+
+        <q-card-section>
+          <div class="row q-col-gutter-xl">
+            <div class="col-12 col-sm-6">
+              <div class="linked-cards-modal__column-header">Offering</div>
+              <q-carousel
+                v-if="modalOfferingCards.length"
+                v-model="offeringSlide"
+                swipeable
+                animated
+                infinite
+                autoplay
+                height="260px"
+                control-color="primary"
+                arrows
+                class="dt-glass-surface"
+              >
+                <q-carousel-slide
+                  v-for="card in modalOfferingCards"
+                  :key="card.id"
+                  :name="card.id"
+                  class="column items-center justify-center"
+                >
+                  <YugiohCard
+                    variant="compact"
+                    :title="card.name"
+                    :image-url="card.imageUrl"
+                    rarity-label="ULTRA RARE"
+                    rarity-variant="ultra-rare"
+                  />
+                </q-carousel-slide>
+              </q-carousel>
+              <div v-else class="linked-cards-modal__empty">No offering cards.</div>
+            </div>
+
+            <div class="col-12 col-sm-6">
+              <div class="linked-cards-modal__column-header">Requesting</div>
+              <q-carousel
+                v-if="modalReceivingCards.length"
+                v-model="requestingSlide"
+                swipeable
+                animated
+                infinite
+                autoplay
+                height="260px"
+                control-color="secondary"
+                arrows
+                class="dt-glass-surface"
+              >
+                <q-carousel-slide
+                  v-for="card in modalReceivingCards"
+                  :key="card.id"
+                  :name="card.id"
+                  class="column items-center justify-center"
+                >
+                  <YugiohCard
+                    variant="compact"
+                    :title="card.name"
+                    :image-url="card.imageUrl"
+                    rarity-label="SECRET RARE"
+                    rarity-variant="secret-rare"
+                  />
+                </q-carousel-slide>
+              </q-carousel>
+              <div v-else class="linked-cards-modal__empty">No requesting cards.</div>
+            </div>
+          </div>
+        </q-card-section>
+      </q-card>
+    </q-dialog>
   </q-page>
 </template>
 
@@ -163,6 +269,10 @@ import type { Card, TradeCard, TradeListItem } from 'src/core/types/api';
 import { useMarketplaceStore } from '../store/marketplace.store';
 
 const marketplaceStore = useMarketplaceStore();
+const linkedModalOpen = ref(false);
+const modalTradeId = ref<string | null>(null);
+const offeringSlide = ref<string | null>(null);
+const requestingSlide = ref<string | null>(null);
 
 type SortOptionValue = 'newest' | 'oldest';
 
@@ -198,9 +308,32 @@ const sortByDisplayValue = computed(
   () => `Sort by: ${sortOptions.find((o) => o.value === sortOption.value)?.label ?? 'Newest'}`,
 );
 
+const modalTrade = computed<TradeListItem | null>(() => {
+  if (!modalTradeId.value) return null;
+  return marketplaceStore.trades.find((t) => t.id === modalTradeId.value) ?? null;
+});
+
+const modalOfferingCards = computed<Card[]>(() =>
+  modalTrade.value ? extractCardsByType(modalTrade.value.id, 'OFFERING') : [],
+);
+
+const modalReceivingCards = computed<Card[]>(() =>
+  modalTrade.value ? extractCardsByType(modalTrade.value.id, 'RECEIVING') : [],
+);
+
 onMounted(async () => {
   await marketplaceStore.loadFirstPage();
 });
+
+function openLinkedCardsModal(tradeId: string): void {
+  modalTradeId.value = tradeId;
+  linkedModalOpen.value = true;
+}
+
+function closeLinkedCardsModal(): void {
+  linkedModalOpen.value = false;
+  modalTradeId.value = null;
+}
 
 function formatRelativeTime(isoDate: string): string {
   const created = new Date(isoDate).getTime();
@@ -487,6 +620,10 @@ function extractCardsByType(tradeId: string, type: TradeCard['type']): Card[] {
 
 .trade-card__footer {
   margin-top: auto;
+}
+
+.trade-card__linked-btn.q-btn {
+  padding-left: 0;
 }
 
 .trade-card__cta.q-btn {
