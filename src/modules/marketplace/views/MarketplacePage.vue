@@ -201,7 +201,7 @@
                 animated
                 infinite
                 autoplay
-                height="260px"
+                height="auto"
                 control-color="primary"
                 arrows
                 class="dt-glass-surface"
@@ -212,13 +212,15 @@
                   :name="card.id"
                   class="column items-center justify-center"
                 >
-                  <YugiohCard
-                    variant="compact"
-                    :title="card.name"
-                    :image-url="card.imageUrl"
-                    rarity-label="ULTRA RARE"
-                    rarity-variant="ultra-rare"
-                  />
+                  <div class="linked-cards-modal__card">
+                    <YugiohCard
+                      variant="compact"
+                      :title="card.name"
+                      :image-url="card.imageUrl"
+                      rarity-label="ULTRA RARE"
+                      rarity-variant="ultra-rare"
+                    />
+                  </div>
                 </q-carousel-slide>
               </q-carousel>
               <div v-else class="linked-cards-modal__empty">No offering cards.</div>
@@ -233,7 +235,7 @@
                 animated
                 infinite
                 autoplay
-                height="260px"
+                height="auto"
                 control-color="secondary"
                 arrows
                 class="dt-glass-surface"
@@ -244,13 +246,15 @@
                   :name="card.id"
                   class="column items-center justify-center"
                 >
-                  <YugiohCard
-                    variant="compact"
-                    :title="card.name"
-                    :image-url="card.imageUrl"
-                    rarity-label="SECRET RARE"
-                    rarity-variant="secret-rare"
-                  />
+                  <div class="linked-cards-modal__card">
+                    <YugiohCard
+                      variant="compact"
+                      :title="card.name"
+                      :image-url="card.imageUrl"
+                      rarity-label="SECRET RARE"
+                      rarity-variant="secret-rare"
+                    />
+                  </div>
                 </q-carousel-slide>
               </q-carousel>
               <div v-else class="linked-cards-modal__empty">No requesting cards.</div>
@@ -263,7 +267,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue';
+import { computed, nextTick, onMounted, ref } from 'vue';
 import YugiohCard from 'src/shared/components/YugiohCard.vue';
 import type { Card, TradeCard, TradeListItem } from 'src/core/types/api';
 import { useMarketplaceStore } from '../store/marketplace.store';
@@ -325,14 +329,23 @@ onMounted(async () => {
   await marketplaceStore.loadFirstPage();
 });
 
-function openLinkedCardsModal(tradeId: string): void {
+async function openLinkedCardsModal(tradeId: string): Promise<void> {
   modalTradeId.value = tradeId;
   linkedModalOpen.value = true;
+  await nextTick();
+
+  const firstOffering = modalOfferingCards.value[0];
+  const firstReceiving = modalReceivingCards.value[0];
+
+  offeringSlide.value = firstOffering ? firstOffering.id : null;
+  requestingSlide.value = firstReceiving ? firstReceiving.id : null;
 }
 
 function closeLinkedCardsModal(): void {
   linkedModalOpen.value = false;
   modalTradeId.value = null;
+  offeringSlide.value = null;
+  requestingSlide.value = null;
 }
 
 function formatRelativeTime(isoDate: string): string {
@@ -639,5 +652,14 @@ function extractCardsByType(tradeId: string, type: TradeCard['type']): Card[] {
 .trade-card__cta.q-btn:hover {
   background: rgba(29, 17, 53, 0.9);
   box-shadow: 0 0 12px rgba(255, 215, 0, 0.2);
+}
+
+.linked-cards-modal__card {
+  width: 220px;
+  max-width: 100%;
+}
+
+.linked-cards-modal__card :deep(.dt-yugioh-card--compact) {
+  width: 100%;
 }
 </style>
