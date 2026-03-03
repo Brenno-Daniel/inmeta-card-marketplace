@@ -1,0 +1,28 @@
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  viewBox="0 0 24 24"
+  fill="none"
+>
+  <defs>
+    <linearGradient id="dt-hexagon-gradient" x1="4" y1="2" x2="20" y2="22" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#FACC15" />
+      <stop offset="1" stop-color="#22D3EE" />
+    </linearGradient>
+  </defs>
+  <rect
+    x="1"
+    y="1"
+    width="22"
+    height="22"
+    rx="6"
+    fill="#020617"
+  />
+  <path
+    d="M12 2L21 8v8L12 22L3 16V8L12 2Z"
+    fill="none"
+    stroke="url(#dt-hexagon-gradient)"
+    stroke-width="1.8"
+    stroke-linejoin="round"
+  />
+</svg>
+
