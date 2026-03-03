@@ -38,9 +38,10 @@
             v-for="item in navItems"
             :key="item.path"
             :to="item.path"
-            :exact="item.path === '/'"
-            class="dt-header__nav-link"
-            active-class="dt-header__nav-link--active"
+            :class="[
+              'dt-header__nav-link',
+              { 'dt-header__nav-link--active': isActivePath(item.path) },
+            ]"
           >
             <!-- Marketplace: hexagon outline icon -->
             <span
@@ -137,15 +138,15 @@
         <q-item-label header class="dt-heading-orbitron text-caption dt-text-muted"
           >Menu</q-item-label
         >
-        <q-item
-          v-for="item in navItems"
-          :key="item.path"
-          clickable
-          :to="item.path"
-          exact
-          active-class="dt-header__drawer-item--active"
-          @click="drawerOpen = false"
-        >
+          <q-item
+            v-for="item in navItems"
+            :key="item.path"
+            clickable
+            :to="item.path"
+            :active="isActivePath(item.path)"
+            active-class="dt-header__drawer-item--active"
+            @click="drawerOpen = false"
+          >
           <q-item-section avatar>
             <q-icon :name="item.icon" />
           </q-item-section>
@@ -175,9 +176,10 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue';
-import { useRouter } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import { useAuthStore } from 'src/modules/auth/store/auth.store';
 
+const route = useRoute();
 const router = useRouter();
 const authStore = useAuthStore();
 
@@ -190,6 +192,8 @@ const navItems = [
   { path: '/trade', label: 'Trade Portal', icon: 'swap_horiz' },
   { path: '/active-trades', label: 'Active Trades', icon: 'show_chart' },
 ] as const;
+
+const isActivePath = (path: string): boolean => route.path === path;
 
 const displayName = computed(() => {
   const name = authStore.user?.name ?? '';
